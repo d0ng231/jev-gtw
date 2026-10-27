@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jev-gtw"
+version = "0.1.0"
+description = "A local, policy-first observation gateway for coding agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = []
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.26,<2"]
+dev = ["mcp>=1.26,<2", "build>=1", "PyYAML>=6"]
+
+[project.scripts]
+jev-gtw = "jev_gtw.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["jev_gtw*"]
+

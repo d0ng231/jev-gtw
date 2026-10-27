@@ -1,0 +1,75 @@
+{
+  "sources": [
+    {
+      "key": "openpii",
+      "repository": "ai4privacy/pii-masking-openpii-1.5m",
+      "revision": "a785eb528e28be2693c3718a27e066970de5dadb",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "key": "gretel_finance_multilingual",
+      "repository": "gretelai/synthetic_pii_finance_multilingual",
+      "revision": "7b844d16738527a04264f50214cb426a4cea0897",
+      "license": "Apache-2.0"
+    },
+    {
+      "key": "gretel_english",
+      "repository": "gretelai/gretel-pii-masking-en-v1",
+      "revision": "e06eb1499ca8d54470f085021cd8e54f9efac7fd",
+      "license": "Apache-2.0",
+      "source_file_sha256": "c89a6bffa838edb0f2fc6686bf35da4930944519ac97308b0b6e32298594b5b1"
+    },
+    {
+      "key": "bigcodebench",
+      "repository": "bigcode/bigcodebench",
+      "revision": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+      "split": "v0.1.4",
+      "license": "Apache-2.0",
+      "source_file_sha256": "d9a4965821c9507ebdfb551c288656b2d5fe553234f5183044333ca8a4018267"
+    },
+    {
+      "key": "chartqa",
+      "repository": "vis-nlp/ChartQA",
+      "revision": "044eabfc306abfe9340c5741f0093aefc5973d06",
+      "license": "See upstream image/source terms; HF card separately lists GPL-3.0.",
+      "selection": "64 archived official development charts; RGB conversion/size bound, no intrinsic PHI-free claim. Original view explicitly authorized; overlay labels constructed."
+    },
+    {
+      "key": "idspace",
+      "repository": "cactuslab/IDSpace",
+      "revision": "a3de23b950d55a39fbd36cfaee16bd260c4d457d",
+      "license": "CC-BY-4.0",
+      "source_url": "https://huggingface.co/datasets/cactuslab/IDSpace/tree/a3de23b950d55a39fbd36cfaee16bd260c4d457d/preview",
+      "selection": "80 synthetic originals with source annotations; identity-document confidentiality simulated by policy."
+    }
+  ],
+  "by_source": {
+    "constructed": 2000,
+    "openpii": 600,
+    "gretel_finance_multilingual": 400,
+    "gretel_english": 400,
+    "bigcodebench": 200,
+    "constructed_images": 576,
+    "chartqa": 192,
+    "idspace": 160
+  },
+  "by_kind": {
+    "text": 3600,
+    "image": 928
+  },
+  "by_category": {
+    "constructed": 2496,
+    "public_source": 1952,
+    "contract_control": 80
+  },
+  "unique_groups": 996,
+  "unique_image_hashes": 592,
+  "cases_sha256": "2151515b8002abdb72c799d9162d468a81a0688294ebdf074c1cc2e4af848831",
+  "prior_source_reuse": true,
+  "limitations": [
+    "Policy/permission labels are constructed; source annotations provide incomplete known-value audits.",
+    "Paired contexts, shared worlds and renderer families are dependent; row count is not independent sample count.",
+    "Sources were used in earlier archived zero-shot research, not for weight updates here; no unseen-data or native benchmark claim.",
+    "Images are metadata-free bounded RGB PNGs, including converted/resized originals and separately identified synthetic overlays."
+  ]
+}

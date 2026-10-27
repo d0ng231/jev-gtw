@@ -1,0 +1,1120 @@
+{
+  "complete": true,
+  "training": false,
+  "overall": {
+    "cases": 4528,
+    "restricted": 1948,
+    "restricted_withheld": 1948,
+    "prohibited_original_releases": 0,
+    "permitted": 2580,
+    "permitted_released": 0,
+    "unnecessary_withholds": 2580,
+    "model_calls": 2572,
+    "inspection_failures": 0,
+    "actions": {
+      "local": 4508,
+      "hold": 20
+    },
+    "reasons": {
+      "sensitive_signal": 1876,
+      "view_not_permitted": 2572,
+      "source_denied": 20,
+      "source_local_only": 40,
+      "incomplete_inspection": 20
+    },
+    "inspected_latency_ms": {
+      "n": 2572,
+      "p50": 105.98680470138788,
+      "p95": 265.0128398090601
+    }
+  },
+  "elapsed_seconds": 66.32706109061837,
+  "slices": {
+    "kind": {
+      "image": {
+        "cases": 928,
+        "restricted": 336,
+        "restricted_withheld": 336,
+        "prohibited_original_releases": 0,
+        "permitted": 592,
+        "permitted_released": 0,
+        "unnecessary_withholds": 592,
+        "model_calls": 928,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 928
+        },
+        "reasons": {
+          "view_not_permitted": 928
+        },
+        "inspected_latency_ms": {
+          "n": 928,
+          "p50": 194.27461177110672,
+          "p95": 348.0326570570469
+        }
+      },
+      "text": {
+        "cases": 3600,
+        "restricted": 1612,
+        "restricted_withheld": 1612,
+        "prohibited_original_releases": 0,
+        "permitted": 1988,
+        "permitted_released": 0,
+        "unnecessary_withholds": 1988,
+        "model_calls": 1644,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 3580,
+          "hold": 20
+        },
+        "reasons": {
+          "sensitive_signal": 1876,
+          "view_not_permitted": 1644,
+          "source_denied": 20,
+          "source_local_only": 40,
+          "incomplete_inspection": 20
+        },
+        "inspected_latency_ms": {
+          "n": 1644,
+          "p50": 95.44265177100897,
+          "p95": 118.03953535854816
+        }
+      }
+    },
+    "domain": {
+      "general": {
+        "cases": 3570,
+        "restricted": 1549,
+        "restricted_withheld": 1549,
+        "prohibited_original_releases": 0,
+        "permitted": 2021,
+        "permitted_released": 0,
+        "unnecessary_withholds": 2021,
+        "model_calls": 2014,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 3550,
+          "hold": 20
+        },
+        "reasons": {
+          "sensitive_signal": 1476,
+          "view_not_permitted": 2014,
+          "source_denied": 20,
+          "source_local_only": 40,
+          "incomplete_inspection": 20
+        },
+        "inspected_latency_ms": {
+          "n": 2014,
+          "p50": 105.43532576411963,
+          "p95": 275.51170997321606
+        }
+      },
+      "medical": {
+        "cases": 958,
+        "restricted": 399,
+        "restricted_withheld": 399,
+        "prohibited_original_releases": 0,
+        "permitted": 559,
+        "permitted_released": 0,
+        "unnecessary_withholds": 559,
+        "model_calls": 558,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 958
+        },
+        "reasons": {
+          "sensitive_signal": 400,
+          "view_not_permitted": 558
+        },
+        "inspected_latency_ms": {
+          "n": 558,
+          "p50": 128.92199959605932,
+          "p95": 239.67613466084003
+        }
+      }
+    },
+    "family": {
+      "cda_xml": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "clinical_note": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "clinical_report": {
+        "cases": 96,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 96,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 96
+        },
+        "reasons": {
+          "view_not_permitted": 96
+        },
+        "inspected_latency_ms": {
+          "n": 96,
+          "p50": 203.05423624813557,
+          "p95": 245.8818443119526
+        }
+      },
+      "column_names": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 81.24352060258389,
+          "p95": 102.90359891951084
+        }
+      },
+      "config_view": {
+        "cases": 96,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 96,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 96
+        },
+        "reasons": {
+          "view_not_permitted": 96
+        },
+        "inspected_latency_ms": {
+          "n": 96,
+          "p50": 196.61850947886705,
+          "p95": 271.4551277458668
+        }
+      },
+      "csv_preview": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "dashboard": {
+        "cases": 96,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 96,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 96
+        },
+        "reasons": {
+          "view_not_permitted": 96
+        },
+        "inspected_latency_ms": {
+          "n": 96,
+          "p50": 205.30690159648657,
+          "p95": 267.39521510899067
+        }
+      },
+      "deny": {
+        "cases": 20,
+        "restricted": 20,
+        "restricted_withheld": 20,
+        "prohibited_original_releases": 0,
+        "permitted": 0,
+        "permitted_released": 0,
+        "unnecessary_withholds": 0,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "hold": 20
+        },
+        "reasons": {
+          "source_denied": 20
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "encoded_log": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "exception": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "fhir_patient": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "filename_listing": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 128,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "view_not_permitted": 128
+        },
+        "inspected_latency_ms": {
+          "n": 128,
+          "p50": 88.77357840538025,
+          "p95": 101.81951709091663
+        }
+      },
+      "history_linkage": {
+        "cases": 64,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 64,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 64
+        },
+        "reasons": {
+          "view_not_permitted": 64
+        },
+        "inspected_latency_ms": {
+          "n": 64,
+          "p50": 81.87483064830303,
+          "p95": 98.97601790726185
+        }
+      },
+      "hl7_message": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 128,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "view_not_permitted": 128
+        },
+        "inspected_latency_ms": {
+          "n": 128,
+          "p50": 81.37451205402613,
+          "p95": 100.17634369432926
+        }
+      },
+      "identity_document": {
+        "cases": 160,
+        "restricted": 80,
+        "restricted_withheld": 80,
+        "prohibited_original_releases": 0,
+        "permitted": 80,
+        "permitted_released": 0,
+        "unnecessary_withholds": 80,
+        "model_calls": 160,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 160
+        },
+        "reasons": {
+          "view_not_permitted": 160
+        },
+        "inspected_latency_ms": {
+          "n": 160,
+          "p50": 292.33410116285086,
+          "p95": 405.97566217184067
+        }
+      },
+      "incomplete": {
+        "cases": 20,
+        "restricted": 20,
+        "restricted_withheld": 20,
+        "prohibited_original_releases": 0,
+        "permitted": 0,
+        "permitted_released": 0,
+        "unnecessary_withholds": 0,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 20
+        },
+        "reasons": {
+          "incomplete_inspection": 20
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "lab_viewer": {
+        "cases": 96,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 96,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 96
+        },
+        "reasons": {
+          "view_not_permitted": 96
+        },
+        "inspected_latency_ms": {
+          "n": 96,
+          "p50": 187.17898335307837,
+          "p95": 266.7595688253641
+        }
+      },
+      "local": {
+        "cases": 20,
+        "restricted": 20,
+        "restricted_withheld": 20,
+        "prohibited_original_releases": 0,
+        "permitted": 0,
+        "permitted_released": 0,
+        "unnecessary_withholds": 0,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 20
+        },
+        "reasons": {
+          "source_local_only": 20
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "medical_dictionary": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 87.03060913830996,
+          "p95": 100.54873675107956
+        }
+      },
+      "native_chart": {
+        "cases": 192,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 128,
+        "permitted_released": 0,
+        "unnecessary_withholds": 128,
+        "model_calls": 192,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 192
+        },
+        "reasons": {
+          "view_not_permitted": 192
+        },
+        "inspected_latency_ms": {
+          "n": 192,
+          "p50": 166.67466145008802,
+          "p95": 208.67764949798584
+        }
+      },
+      "nested_json": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "parse_error": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 81.47554378956556,
+          "p95": 98.22737984359264
+        }
+      },
+      "patient_form": {
+        "cases": 96,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 96,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 96
+        },
+        "reasons": {
+          "view_not_permitted": 96
+        },
+        "inspected_latency_ms": {
+          "n": 96,
+          "p50": 189.509772695601,
+          "p95": 244.92129869759083
+        }
+      },
+      "public_code": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 85.73598973453045,
+          "p95": 97.80296869575977
+        }
+      },
+      "public_native_document": {
+        "cases": 1400,
+        "restricted": 700,
+        "restricted_withheld": 700,
+        "prohibited_original_releases": 0,
+        "permitted": 700,
+        "permitted_released": 0,
+        "unnecessary_withholds": 700,
+        "model_calls": 882,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 1400
+        },
+        "reasons": {
+          "sensitive_signal": 518,
+          "view_not_permitted": 882
+        },
+        "inspected_latency_ms": {
+          "n": 882,
+          "p50": 102.06637624651194,
+          "p95": 121.3958915323019
+        }
+      },
+      "public_repository_code": {
+        "cases": 200,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 200,
+        "permitted_released": 0,
+        "unnecessary_withholds": 200,
+        "model_calls": 186,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 200
+        },
+        "reasons": {
+          "view_not_permitted": 186,
+          "sensitive_signal": 14
+        },
+        "inspected_latency_ms": {
+          "n": 186,
+          "p50": 97.92190697044134,
+          "p95": 111.75839602947235
+        }
+      },
+      "redacted": {
+        "cases": 20,
+        "restricted": 20,
+        "restricted_withheld": 20,
+        "prohibited_original_releases": 0,
+        "permitted": 0,
+        "permitted_released": 0,
+        "unnecessary_withholds": 0,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 20
+        },
+        "reasons": {
+          "source_local_only": 20
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "redaction_placeholders": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 84.84844584017992,
+          "p95": 103.166364133358
+        }
+      },
+      "safe_aggregate": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 85.51305625587702,
+          "p95": 100.41533969342709
+        }
+      },
+      "schema_fields": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 82.91473984718323,
+          "p95": 95.4986959695816
+        }
+      },
+      "software_identifier": {
+        "cases": 32,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 32,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 32
+        },
+        "reasons": {
+          "view_not_permitted": 32
+        },
+        "inspected_latency_ms": {
+          "n": 32,
+          "p50": 79.23916727304459,
+          "p95": 92.75665320456028
+        }
+      },
+      "source_diff": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "sql_rows": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "terminal": {
+        "cases": 96,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 96,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 96
+        },
+        "reasons": {
+          "view_not_permitted": 96
+        },
+        "inspected_latency_ms": {
+          "n": 96,
+          "p50": 194.71835531294346,
+          "p95": 274.38515052199364
+        }
+      },
+      "untrusted_permission": {
+        "cases": 64,
+        "restricted": 32,
+        "restricted_withheld": 32,
+        "prohibited_original_releases": 0,
+        "permitted": 32,
+        "permitted_released": 0,
+        "unnecessary_withholds": 32,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 64
+        },
+        "reasons": {
+          "sensitive_signal": 64
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "yaml_configuration": {
+        "cases": 128,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 64,
+        "permitted_released": 0,
+        "unnecessary_withholds": 64,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      }
+    },
+    "source_key": {
+      "bigcodebench": {
+        "cases": 200,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 200,
+        "permitted_released": 0,
+        "unnecessary_withholds": 200,
+        "model_calls": 186,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 200
+        },
+        "reasons": {
+          "view_not_permitted": 186,
+          "sensitive_signal": 14
+        },
+        "inspected_latency_ms": {
+          "n": 186,
+          "p50": 97.92190697044134,
+          "p95": 111.75839602947235
+        }
+      },
+      "chartqa": {
+        "cases": 192,
+        "restricted": 64,
+        "restricted_withheld": 64,
+        "prohibited_original_releases": 0,
+        "permitted": 128,
+        "permitted_released": 0,
+        "unnecessary_withholds": 128,
+        "model_calls": 192,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 192
+        },
+        "reasons": {
+          "view_not_permitted": 192
+        },
+        "inspected_latency_ms": {
+          "n": 192,
+          "p50": 166.67466145008802,
+          "p95": 208.67764949798584
+        }
+      },
+      "constructed": {
+        "cases": 2000,
+        "restricted": 912,
+        "restricted_withheld": 912,
+        "prohibited_original_releases": 0,
+        "permitted": 1088,
+        "permitted_released": 0,
+        "unnecessary_withholds": 1088,
+        "model_calls": 576,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 1980,
+          "hold": 20
+        },
+        "reasons": {
+          "sensitive_signal": 1344,
+          "view_not_permitted": 576,
+          "source_denied": 20,
+          "source_local_only": 40,
+          "incomplete_inspection": 20
+        },
+        "inspected_latency_ms": {
+          "n": 576,
+          "p50": 84.25911422818899,
+          "p95": 100.4172395914793
+        }
+      },
+      "constructed_images": {
+        "cases": 576,
+        "restricted": 192,
+        "restricted_withheld": 192,
+        "prohibited_original_releases": 0,
+        "permitted": 384,
+        "permitted_released": 0,
+        "unnecessary_withholds": 384,
+        "model_calls": 576,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 576
+        },
+        "reasons": {
+          "view_not_permitted": 576
+        },
+        "inspected_latency_ms": {
+          "n": 576,
+          "p50": 194.53787617385387,
+          "p95": 264.2093878239393
+        }
+      },
+      "gretel_english": {
+        "cases": 400,
+        "restricted": 200,
+        "restricted_withheld": 200,
+        "prohibited_original_releases": 0,
+        "permitted": 200,
+        "permitted_released": 0,
+        "unnecessary_withholds": 200,
+        "model_calls": 210,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 400
+        },
+        "reasons": {
+          "sensitive_signal": 190,
+          "view_not_permitted": 210
+        },
+        "inspected_latency_ms": {
+          "n": 210,
+          "p50": 100.52789188921452,
+          "p95": 121.85784615576267
+        }
+      },
+      "gretel_finance_multilingual": {
+        "cases": 400,
+        "restricted": 200,
+        "restricted_withheld": 200,
+        "prohibited_original_releases": 0,
+        "permitted": 200,
+        "permitted_released": 0,
+        "unnecessary_withholds": 200,
+        "model_calls": 340,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 400
+        },
+        "reasons": {
+          "view_not_permitted": 340,
+          "sensitive_signal": 60
+        },
+        "inspected_latency_ms": {
+          "n": 340,
+          "p50": 104.45598047226667,
+          "p95": 124.47277456521988
+        }
+      },
+      "idspace": {
+        "cases": 160,
+        "restricted": 80,
+        "restricted_withheld": 80,
+        "prohibited_original_releases": 0,
+        "permitted": 80,
+        "permitted_released": 0,
+        "unnecessary_withholds": 80,
+        "model_calls": 160,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 160
+        },
+        "reasons": {
+          "view_not_permitted": 160
+        },
+        "inspected_latency_ms": {
+          "n": 160,
+          "p50": 292.33410116285086,
+          "p95": 405.97566217184067
+        }
+      },
+      "openpii": {
+        "cases": 600,
+        "restricted": 300,
+        "restricted_withheld": 300,
+        "prohibited_original_releases": 0,
+        "permitted": 300,
+        "permitted_released": 0,
+        "unnecessary_withholds": 300,
+        "model_calls": 332,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 600
+        },
+        "reasons": {
+          "sensitive_signal": 268,
+          "view_not_permitted": 332
+        },
+        "inspected_latency_ms": {
+          "n": 332,
+          "p50": 101.46654862910509,
+          "p95": 119.33883279561996
+        }
+      }
+    }
+  }
+}

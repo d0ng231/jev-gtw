@@ -1,0 +1,17 @@
+jev-gtw contains gateway code, authored synthetic examples and Agent Skills.
+No model weights or third-party evaluation datasets are distributed here.
+
+The default inspector is startlux-models/StartLux-Decision-v1.1-0.8B-Instant,
+revision 6496ae641cc71b149ce9dad69bd97f2a44e7bf11. Its weights are licensed
+CC BY-NC 4.0 by StartLux Labs; commercial use requires separate permission.
+The official StartLux inference package is Apache-2.0. These licenses are
+separate from the MIT license on the gateway code.
+Model: https://huggingface.co/startlux-models/StartLux-Decision-v1.1-0.8B-Instant
+Runtime: https://github.com/StartLuxLabs/StartLux-Decision
+
+Optional integration uses the official Model Context Protocol Python SDK
+under its own MIT license: https://github.com/modelcontextprotocol/python-sdk
+
+Reported external-corpus results use public/synthetic datasets in a local
+evaluation. Aggregates are shared; source rows, images, model responses and
+agent trajectories are excluded from this repository. See docs/RESULTS.md.

@@ -1,0 +1,23 @@
+{
+  "training": false,
+  "model": "startlux-models/StartLux-Decision-v1.1-0.8B-Instant",
+  "revision": "6496ae641cc71b149ce9dad69bd97f2a44e7bf11",
+  "checkpoint_sha256": "ee91ef53043dbcc599f7b9aee7a955b4c866cf71be1fc2682cadd1ee0303a9d5",
+  "threshold": 0.98,
+  "workers": 6,
+  "case_sha256": "2151515b8002abdb72c799d9162d468a81a0688294ebdf074c1cc2e4af848831",
+  "source_sha256": {
+    "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+    "jev_gtw/core.py": "6b185b66b08f3c9a2bce9a39eb3579319ee926b0cee47dcc362834d62bd96f65",
+    "jev_gtw/judge.py": "15fcffa9ce9d5fe11eb3e627b8187e4ef22aa93224e344ff11a7ba1812c8d721",
+    "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+    "jev_gtw/signals.py": "1ace5d92291135d16cda98c5fe853477f4769636ae918872945d6c198f2b79e5",
+    "tools/evaluate.py": "7ba24452060353bc88c7eb902d51a710d0b491c4d8c48533c96c098e199c5c45"
+  },
+  "cases": 4528,
+  "posthoc_tuning": false,
+  "automatic_redaction": false,
+  "legacy_redacted_policy": "Map redacted-only sources to local-only: no automatic candidate release.",
+  "scoring": "Complete original view release vs constructed permission labels; not semantic leak detection.",
+  "cohort_note": "Existing 4,528-case public/synthetic local research cohort; source rows are not redistributed. This is a reuse study, not a new independent holdout."
+}

@@ -1,0 +1,4 @@
+Task: compute total units by team.
+Input handle: records.
+Schema: name (string), email (string), team (string), units (integer).
+Write /outputs/answer.json. Individual records remain local.

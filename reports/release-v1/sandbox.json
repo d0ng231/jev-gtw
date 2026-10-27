@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "backend": "apptainer",
+  "scenarios": [
+    {
+      "scenario": "aggregate_saved",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "stdout_canary",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "stderr_canary",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "exception_canary",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "nonzero_status",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "readonly_inputs",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "network_disabled",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "environment_clean",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "host_unmounted",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "output_bound",
+      "passed": true,
+      "action": "local"
+    },
+    {
+      "scenario": "time_bound",
+      "passed": true,
+      "action": "local"
+    }
+  ]
+}

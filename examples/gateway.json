@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "root": "demo",
+  "context": {
+    "task": "Compute total units by team and save answer.json.",
+    "policy": "Individual records and identities remain local. Public task setup and the registered public chart may be viewed."
+  },
+  "inspector": {
+    "base_url": "http://127.0.0.1:8090"
+  },
+  "sources": {
+    "setup": {
+      "path": "setup.txt",
+      "access": {
+        "view": "approved",
+        "approved_sha256": "ff7a80bb432945aa41160aa694ee31c7f89f5516fb469627cd1a70856ee3d236"
+      }
+    },
+    "records": {
+      "path": "records.csv"
+    },
+    "public_image": {
+      "path": "chart.png",
+      "kind": "png",
+      "access": {
+        "view": "approved",
+        "approved_sha256": "4524636f2620131d926fc60388ccac04e29129fe570a15bfdc47e79fdd113aa1"
+      }
+    }
+  }
+}

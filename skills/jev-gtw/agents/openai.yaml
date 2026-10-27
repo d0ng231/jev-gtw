@@ -1,0 +1,4 @@
+interface:
+  display_name: "JEV Gateway"
+  short_description: "Review data access and keep protected records local"
+  default_prompt: "Use $jev-gtw to inspect task data through the guarded gateway."

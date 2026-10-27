@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "methods": 57,
+  "generated_contract_trials": 1280,
+  "mcp_transport": "real stdio SDK client",
+  "skill_installations": [
+    "Codex project directory",
+    "Claude Code project directory"
+  ],
+  "full_native_agent_sessions": false,
+  "docker_live_test": false,
+  "apptainer_live_scenarios": 11
+}

@@ -1,0 +1,233 @@
+{
+  "complete": true,
+  "training": false,
+  "overall": {
+    "cases": 512,
+    "restricted": 256,
+    "restricted_withheld": 256,
+    "prohibited_original_releases": 0,
+    "permitted": 256,
+    "permitted_released": 128,
+    "unnecessary_withholds": 128,
+    "model_calls": 192,
+    "inspection_failures": 0,
+    "actions": {
+      "local": 384,
+      "show": 128
+    },
+    "reasons": {
+      "source_local_only": 128,
+      "sensitive_signal": 64,
+      "exact_trusted_view": 128,
+      "view_not_permitted": 192
+    },
+    "inspected_latency_ms": {
+      "n": 192,
+      "p50": 89.22580629587173,
+      "p95": 99.43901933729649
+    }
+  },
+  "elapsed_seconds": 3.1942861322313547,
+  "slices": {
+    "kind": {
+      "image": {
+        "cases": 256,
+        "restricted": 128,
+        "restricted_withheld": 128,
+        "prohibited_original_releases": 0,
+        "permitted": 128,
+        "permitted_released": 64,
+        "unnecessary_withholds": 64,
+        "model_calls": 128,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 192,
+          "show": 64
+        },
+        "reasons": {
+          "source_local_only": 64,
+          "exact_trusted_view": 64,
+          "view_not_permitted": 128
+        },
+        "inspected_latency_ms": {
+          "n": 128,
+          "p50": 88.69751822203398,
+          "p95": 98.43085147440434
+        }
+      },
+      "text": {
+        "cases": 256,
+        "restricted": 128,
+        "restricted_withheld": 128,
+        "prohibited_original_releases": 0,
+        "permitted": 128,
+        "permitted_released": 64,
+        "unnecessary_withholds": 64,
+        "model_calls": 64,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 192,
+          "show": 64
+        },
+        "reasons": {
+          "source_local_only": 64,
+          "sensitive_signal": 64,
+          "exact_trusted_view": 64,
+          "view_not_permitted": 64
+        },
+        "inspected_latency_ms": {
+          "n": 64,
+          "p50": 93.95011235028505,
+          "p95": 99.7898317873478
+        }
+      }
+    },
+    "domain": {
+      "synthetic": {
+        "cases": 512,
+        "restricted": 256,
+        "restricted_withheld": 256,
+        "prohibited_original_releases": 0,
+        "permitted": 256,
+        "permitted_released": 128,
+        "unnecessary_withholds": 128,
+        "model_calls": 192,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 384,
+          "show": 128
+        },
+        "reasons": {
+          "source_local_only": 128,
+          "sensitive_signal": 64,
+          "exact_trusted_view": 128,
+          "view_not_permitted": 192
+        },
+        "inspected_latency_ms": {
+          "n": 192,
+          "p50": 89.22580629587173,
+          "p95": 99.43901933729649
+        }
+      }
+    },
+    "family": {
+      "contextual_private": {
+        "cases": 128,
+        "restricted": 128,
+        "restricted_withheld": 128,
+        "prohibited_original_releases": 0,
+        "permitted": 0,
+        "permitted_released": 0,
+        "unnecessary_withholds": 0,
+        "model_calls": 64,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "sensitive_signal": 64,
+          "view_not_permitted": 64
+        },
+        "inspected_latency_ms": {
+          "n": 64,
+          "p50": 88.58297765254974,
+          "p95": 99.43901933729649
+        }
+      },
+      "contextual_public": {
+        "cases": 128,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 128,
+        "permitted_released": 0,
+        "unnecessary_withholds": 128,
+        "model_calls": 128,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "view_not_permitted": 128
+        },
+        "inspected_latency_ms": {
+          "n": 128,
+          "p50": 89.99010175466537,
+          "p95": 98.98260608315468
+        }
+      },
+      "protected": {
+        "cases": 128,
+        "restricted": 128,
+        "restricted_withheld": 128,
+        "prohibited_original_releases": 0,
+        "permitted": 0,
+        "permitted_released": 0,
+        "unnecessary_withholds": 0,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 128
+        },
+        "reasons": {
+          "source_local_only": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      },
+      "public_snapshot": {
+        "cases": 128,
+        "restricted": 0,
+        "restricted_withheld": 0,
+        "prohibited_original_releases": 0,
+        "permitted": 128,
+        "permitted_released": 128,
+        "unnecessary_withholds": 0,
+        "model_calls": 0,
+        "inspection_failures": 0,
+        "actions": {
+          "show": 128
+        },
+        "reasons": {
+          "exact_trusted_view": 128
+        },
+        "inspected_latency_ms": {
+          "n": 0,
+          "p50": null,
+          "p95": null
+        }
+      }
+    },
+    "source_key": {
+      "authored_policy_fixtures": {
+        "cases": 512,
+        "restricted": 256,
+        "restricted_withheld": 256,
+        "prohibited_original_releases": 0,
+        "permitted": 256,
+        "permitted_released": 128,
+        "unnecessary_withholds": 128,
+        "model_calls": 192,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 384,
+          "show": 128
+        },
+        "reasons": {
+          "source_local_only": 128,
+          "sensitive_signal": 64,
+          "exact_trusted_view": 128,
+          "view_not_permitted": 192
+        },
+        "inspected_latency_ms": {
+          "n": 192,
+          "p50": 89.22580629587173,
+          "p95": 99.43901933729649
+        }
+      }
+    }
+  }
+}
