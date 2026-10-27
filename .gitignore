@@ -18,6 +18,10 @@
 !/docs/ARCHITECTURE.md
 !/docs/INTEGRATIONS.md
 !/docs/RESULTS.md
+!/docs/assets/
+/docs/assets/*
+!/docs/assets/architecture.svg
+!/docs/assets/workflow.svg
 __pycache__/
 *.pyc
 *.egg-info/

@@ -8,7 +8,8 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 TOP={'README.md','LICENSE','NOTICE','pyproject.toml','index.html','.gitignore'}
 DIRECTORIES={'jev_gtw','tests','tools','examples','skills','reports','.github'}
-DOCS={'docs/ARCHITECTURE.md','docs/INTEGRATIONS.md','docs/RESULTS.md'}
+DOCS={'docs/ARCHITECTURE.md','docs/INTEGRATIONS.md','docs/RESULTS.md',
+      'docs/assets/architecture.svg','docs/assets/workflow.svg'}
 PATTERNS=[re.compile(r'gh[pousr]_[A-Za-z0-9]{30,}'),re.compile(r'github_pat_[A-Za-z0-9_]{30,}'),
           re.compile(r'hf_[A-Za-z0-9]{25,}'),re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
           re.compile('/'+'midtier/'),re.compile('/'+'cdata/'),re.compile(r'\bai-(?:gpu|cpu)\d+\b')]

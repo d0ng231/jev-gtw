@@ -5,11 +5,18 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "jev-gtw"
 version = "0.1.0"
-description = "A local, policy-first observation gateway for coding agents"
+description = "Local PII/PHI data-access guardrails and MCP tools for coding agents"
+keywords = ["coding-agents", "privacy", "pii", "phi", "mcp", "agent-skills", "codex", "claude-code", "jev"]
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/d0ng231/jev-gtw"
+Documentation = "https://github.com/d0ng231/jev-gtw/blob/main/docs/INTEGRATIONS.md"
+Repository = "https://github.com/d0ng231/jev-gtw"
+Issues = "https://github.com/d0ng231/jev-gtw/issues"
 
 [project.optional-dependencies]
 mcp = ["mcp>=1.26,<2"]

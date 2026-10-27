@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="536" viewBox="0 0 1120 536" role="img" aria-labelledby="title description">
+  <title id="title">A coding-agent workflow: compute over protected records without displaying them</title>
+  <desc id="description">First read an operator-approved setup to obtain the task and schema. A request to view protected records returns local-processing feedback. With a configured sandbox, the coding agent submits a Python probe that reads the registered inputs and writes an answer artifact. Captured output is reviewed and the artifact remains local. The agent gets an opaque receipt rather than the private rows; a receipt does not prove the computation succeeded.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#6c8291"/></marker></defs>
+  <rect width="1120" height="536" rx="20" fill="#f5f8fb"/>
+  <g font-family="DejaVu Sans, Arial, sans-serif" fill="#172e3d">
+    <text x="36" y="48" font-size="29" font-weight="700">A task the agent can keep working on</text>
+    <text x="36" y="80" font-size="18" fill="#536a7b">Example: compute totals from private records and save the result locally.</text>
+
+    <rect x="36" y="116" width="320" height="226" rx="14" fill="#ffffff" stroke="#cbd9e3"/>
+    <circle cx="65" cy="148" r="15" fill="#e1f3ee"/><text x="65" y="154" text-anchor="middle" font-size="17" font-weight="700" fill="#087f76">1</text>
+    <text x="92" y="155" font-size="21" font-weight="700">Read public context</text>
+    <rect x="56" y="179" width="280" height="49" rx="8" fill="#f1f5f9"/>
+    <text x="70" y="209" font-family="DejaVu Sans Mono, monospace" font-size="16">gateway_read("setup")</text>
+    <text x="56" y="258" font-size="18">Approved task + schema</text>
+    <text x="56" y="285" font-size="16" fill="#536a7b">The exact public snapshot is shown.</text>
+    <text x="56" y="317" font-size="16" font-weight="700" fill="#087f76">No model call</text>
+
+    <rect x="400" y="116" width="320" height="226" rx="14" fill="#ffffff" stroke="#cbd9e3"/>
+    <circle cx="429" cy="148" r="15" fill="#fff0da"/><text x="429" y="154" text-anchor="middle" font-size="17" font-weight="700" fill="#98641b">2</text>
+    <text x="456" y="155" font-size="21" font-weight="700">Read protected data</text>
+    <rect x="420" y="179" width="280" height="49" rx="8" fill="#f1f5f9"/>
+    <text x="434" y="209" font-family="DejaVu Sans Mono, monospace" font-size="16">gateway_read("records")</text>
+    <text x="420" y="258" font-size="18">Local-processing feedback</text>
+    <text x="420" y="285" font-size="15" fill="#536a7b">Raw rows never enter agent context.</text>
+    <text x="420" y="317" font-size="16" font-weight="700" fill="#98641b">Protected view withheld</text>
+
+    <rect x="764" y="116" width="320" height="226" rx="14" fill="#ffffff" stroke="#cbd9e3"/>
+    <circle cx="793" cy="148" r="15" fill="#ece7fa"/><text x="793" y="154" text-anchor="middle" font-size="17" font-weight="700" fill="#665298">3</text>
+    <text x="820" y="155" font-size="21" font-weight="700">Submit a local probe</text>
+    <rect x="784" y="179" width="280" height="49" rx="8" fill="#f1f5f9"/>
+    <text x="798" y="209" font-family="DejaVu Sans Mono, monospace" font-size="16">gateway_compute(...)</text>
+    <text x="784" y="258" font-size="18">Read inputs; save answer.json</text>
+    <text x="784" y="285" font-size="16" fill="#536a7b">Requires an authorized sandbox.</text>
+    <text x="784" y="317" font-size="16" font-weight="700" fill="#665298">Capture is reviewed again</text>
+
+    <g fill="none" stroke="#6c8291" stroke-width="2" marker-end="url(#arrow)"><path d="M356 228 H400"/><path d="M720 228 H764"/><path d="M924 342 V378"/></g>
+
+    <rect x="36" y="378" width="1048" height="108" rx="14" fill="#e8f5f1" stroke="#a9cdc3"/>
+    <text x="58" y="408" font-size="12" font-weight="700" fill="#087f76" letter-spacing="1.2">WHAT THE AGENT RECEIVES</text>
+    <text x="58" y="439" font-size="19" font-weight="700">Reviewed capture or withholding feedback + an artifact receipt</text>
+    <text x="58" y="466" font-size="17" fill="#536a7b">The original records and saved output stay on the gateway host.</text>
+    <text x="36" y="516" font-size="16" fill="#536a7b">Fictional example. Probe output defaults to local-only. A receipt is not proof that the task succeeded.</text>
+  </g>
+</svg>

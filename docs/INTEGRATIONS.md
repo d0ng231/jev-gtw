@@ -1,4 +1,8 @@
-# Codex, Claude Code and custom harnesses
+# Use JEV Gateway with Codex, Claude Code and custom harnesses
+
+For a first run, start with the [no-GPU demo](../README.md#quick-start-no-gpu-required)
+and its copyable client registration commands. This guide covers custom source
+configuration, inference, local computation and harness integration.
 
 The repository ships one portable skill and one stdio MCP server. No global
 settings are changed by installation. Native client tool interception is not

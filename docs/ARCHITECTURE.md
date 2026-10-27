@@ -1,26 +1,15 @@
-# Policy-first observation gateway
+# JEV Gateway architecture
 
 The active package is `jev_gtw`. It keeps original data in the gateway process
 until a view is admitted. It has no training loop, reward model, optimizer or
 automatic calibration step. The default inspector is the frozen 0.8B Instant
 checkpoint, served through the official vLLM-backed runtime.
 
-```mermaid
-flowchart LR
-    A[Codex / Claude Code / custom agent] -->|source handle or probe code| M[MCP tools]
-    T[Operator: task, policy, recipient, source registry] --> G[Gateway]
-    M --> G
-    G -->|protected| L[Withhold; offer local computation]
-    G -->|exact approved snapshot| V[Validate released bytes]
-    G -->|contextual source without obvious sensitive signals| J[0.8B JEV: one typed question]
-    J -->|permission score at least 0.98| V
-    J -->|uncertain or failed| L
-    M -->|permitted probe| S[Network-disabled sandbox]
-    S -->|captured stdout and stderr| G
-    S --> P[Private output artifacts]
-    V -->|admitted text or PNG| A
-    L -->|fixed feedback| A
-```
+![Architecture: the coding agent uses guarded MCP tools, trusted policy controls release, and local sandbox output passes through the same gateway.](assets/architecture.svg)
+
+The [release flowchart](../README.md#how-a-view-is-released) separates protected,
+approved and contextual views. The SVG figures are editable text assets in
+[`docs/assets`](assets/).
 
 ## Access comes from the host
 
@@ -65,6 +54,8 @@ are withheld. There is no OCR, automatic pixel redaction or medical PHI taxonomy
 classifier. Text signal categories are narrow vetoes, not exhaustive detection.
 
 ## Local probes
+
+![Task workflow: read approved setup, withhold a protected view, run an authorized local probe, and return reviewed feedback plus a private-artifact receipt.](assets/workflow.svg)
 
 `gateway_compute` accepts Python and up to eight registered input handles.
 The server snapshots permitted inputs, mounts them read-only into a configured
