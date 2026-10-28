@@ -21,12 +21,12 @@ personally identifiable information (PII) and protected health information
 | **Source permissions first** | Protected views stay local. Approved public snapshots pass only when their exact content hash matches. |
 | **Smaller local inspector** | The default is **StartLux-Decision-v1.1-0.8B-Instant**. Contextual sources receive at most one typed permission check. |
 | **Text and image review** | Captured text and supported RGB PNGs pass through the same release boundary. |
-| **Useful continuation** | Fixed feedback directs the agent toward an approved view or an isolated local probe. |
+| **Useful continuation** | Configured next steps point to an approved setup view or an available isolated probe. |
+| **Fast repeat decisions** | A bounded 30-second score cache reuses identical requests; context or data changes invalidate the key. |
 | **Portable agent skill** | One skill and three MCP tools for Codex, Claude Code and compatible clients. |
 
-**Current scope:** a research prototype with strict source controls. The learned
-contextual reviewer over-blocks permitted data; it is not validated as a general
-PHI detector. The [completed results](#what-has-been-tested) report both withholding
+**Current scope:** a research prototype with strict source controls. The contextual reviewer still over-blocks permitted
+data, especially images; it is not validated as a general PHI detector. The [completed results](#what-has-been-tested) report both withholding
 and permitted-view access.
 
 ## Quick start: no GPU required
@@ -106,11 +106,15 @@ flowchart TD
     snapshot -->|"No"| withheld
     policy -->|"contextual"| checks{"Complete, supported and no sensitive text signal?"}
     checks -->|"No"| withheld
-    checks -->|"Yes"| model["Local 0.8B JEV: one permission question"]
+    checks -->|"Yes"| model["Local 0.8B JEV: one typed question"]
     model --> score{"Valid permission score at least 0.98?"}
     score -->|"Yes"| shown
     score -->|"No or inspection error"| withheld
 ```
+
+The default `hybrid` inspector asks about disclosure risk for text and permission
+for images, retaining the 0.98 release threshold. Unicode and encoded identifiers
+receive bounded checks before inference.
 
 Redaction is not an automatic release path. A transformed view still needs its
 own review. The 0.98 threshold is **not a calibrated 98% safety guarantee**.
@@ -133,31 +137,46 @@ tools, other servers or direct chat uploads.
 
 ## What has been tested
 
+**No training or weight updates.** The latest completed evaluation includes real
+0.8B inference, before/after comparisons and actual coding-model MCP workflows.
+
 | Completed check | Result |
 |---|---|
-| 4,528 existing text/image cases | 1,948/1,948 prohibited originals withheld; **0/2,580 permitted views released**. |
-| 512 reproducible policy fixtures | All 256 prohibited views withheld; all 128 exact approved public snapshots released; all 128 contextual public views withheld. |
-| Boundary and integration checks | 57 tests + 1,280 generated contract trials passed, including real MCP stdio calls and skill installation. |
-| Actual Apptainer probes | 11 scenarios passed; an aggregate was saved locally without exposing input records. |
+| 5,432 new decision cases, 35 families | **2,812/2,812 prohibited views withheld**; permitted release improved from **132/2,620 (5.0%) to 1,149/2,620 (43.9%)**. |
+| 4,528 reused regression cases | Final: 1,948/1,948 prohibited views withheld; 294/2,580 permitted views released. |
+| 768 fresh image cases | 256/256 protected views withheld; 256/256 exact approved public snapshots released; all 256 contextual public views still withheld. |
+| Actual local coding agents | **Qwen3.8-27B: 27/27**, **Gemma 4 31B IT: 27/27** correct private artifacts; no known canary exposures. |
+| Boundary and execution checks | **74 tests + 1,280 generated trials**, 27 scripted MCP workflows and 11 real container scenarios passed. |
 
-The contextual model path is **too conservative to claim useful automatic
-permission judgment** at this threshold. Exact approved public views provide
-the tested route for navigation. Full native Codex/Claude conversations were
-not run in this study.
+The agent tasks cover CSV repair/joins, JSONL, SQLite, FHIR, HL7, clinical category
+counts and PNG processing. They use the official MCP client and SingularityCE
+with only gateway tools exposed. These are authored tasks, not native
+Codex/Claude sessions or standard coding-benchmark scores.
 
-The large cohort made 2,572 model calls. Warm six-worker decision latency for
-inspected cases was approximately **106 ms p50 / 265 ms p95** on one A100;
-this excludes startup and is not an isolated hardware benchmark. No weights
-were updated. [Full methods and limitations](docs/RESULTS.md) ·
-[HTML report — download and open locally](index.html) · [Machine-readable evidence](reports/release-v1/).
+**Failures changed the design.** The new text question released eight credential
+screenshots when applied to images; that image variant was rejected. A 0.95
+threshold replay released one prohibited regression view, so the default remains
+0.98. Over-blocking remains substantial, especially for contextual images.
+
+Exact repeated requests measured **30.31 ms → 0.47 ms** warm median latency in a
+serial cache microbenchmark, with 1 model call for 41 requests instead of 41.
+This is a repeated-input result, not general workload latency. The new cohort
+used 3,514 model calls versus 3,771 before; six-worker warm latency was about
+78 ms p50 / 150 ms p95 on one A100.
+
+[Full methods, datasets and limitations](docs/RESULTS.md) ·
+[HTML report — download and open locally](index.html) ·
+[Machine-readable evidence](reports/release-v2/).
 
 ## Reproduce
 
 ```bash
 python -m pip install -e '.[dev]'
 python -B -m unittest discover -s tests -v
-python tools/make_cases.py --out /path/to/new-fixtures
-python tools/evaluate.py --cases /path/to/new-fixtures/cases.json \
+python tools/fetch_public_examples.py --out /path/to/new-public-sources
+python tools/make_scenarios.py --out /path/to/new-scenarios \
+  --public /path/to/new-public-sources/examples.json
+python tools/evaluate.py --cases /path/to/new-scenarios/test.json \
   --out /path/to/new-results --url http://127.0.0.1:8090
 ```
 

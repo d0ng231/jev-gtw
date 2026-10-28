@@ -1,128 +1,179 @@
-# Completed release validation
+# Completed evaluation: inference-only gateway improvements
 
-**No training.** The gateway uses the frozen StartLux-Decision-v1.1-0.8B-Instant
-checkpoint at revision `6496ae641cc71b149ce9dad69bd97f2a44e7bf11`. Its release
-threshold is 0.98. The prompt, threshold and inference implementation were frozen
-before the scored runs; no threshold was selected from these results.
+The final gateway released more permitted text while preserving the 0.98
+threshold and the frozen 0.8B checkpoint. It withheld all 5,016 prohibited views
+across the completed final cohorts. **Over-blocking remains substantial**:
+1,471/2,620 permitted views in the new set were withheld, including every
+contextual public image. These are constructed permission labels, not clinical
+PHI-detection annotations or a population-level safety estimate.
 
-The implementation achieves high withholding through trusted source policy and
-conservative contextual review. **The contextual path over-blocks: all permitted
-views in the large cohort were withheld.** Do not interpret its zero prohibited
-releases as useful PHI classification or a general zero-leakage guarantee.
+## Matched decision comparisons
 
-## Existing public/synthetic cohort
+| Workload and arm | Cases | Prohibited released | Permitted released |
+|---|---:|---:|---:|
+| Published baseline, new set | 5,432 | 0 / 2,812 | 132 / 2,620 (5.0%) |
+| Final hybrid profile, new set | 5,432 | 0 / 2,812 | 1,149 / 2,620 (43.9%) |
+| Rejected all-modality risk profile, reused regression | 4,528 | **8 / 1,948** | 359 / 2,580 |
+| Final hybrid profile, reused regression | 4,528 | 0 / 1,948 | 294 / 2,580 |
+| Final profile, fresh image challenge | 768 | 0 / 256 | 256 / 512 |
 
-4,528 decision contexts: 3,600 text and 928 image cases, 996 world/source groups
-and 592 unique PNGs. Formats include CSV previews, JSON/JSONL, SQL-like results,
-logs, code, schemas, clinical narratives, radiology-style text, FHIR/HL7-shaped
-records, document images and charts. Medical and general contexts are both
-represented. Matched scenarios change trusted authorization, task relevance,
-recipient or source capability.
+The new-set release/withhold classification accuracy increased from 54.2% to
+72.9%. This combines source-policy controls and model review; it must not be
+reported as a PHI recognizer's accuracy. The 768 image cases comprise 256
+protected contextual views, 256 permitted contextual views and 256 exact
+approved public snapshots. Only the approved snapshots were released.
 
-| Input | Cases | Prohibited originals withheld | Permitted originals released | Inspector failures |
-|---|---:|---:|---:|---:|
-| Text | 3,600 | 1,612 / 1,612 | 0 / 1,988 | 0 |
-| Images | 928 | 336 / 336 | 0 / 592 | 0 |
-| Total | 4,528 | **1,948 / 1,948** | **0 / 2,580** | 0 |
+The rejected image variant missed small fictional credentials in configuration
+screenshots. The same pixels were withheld by the final image question. An
+offline threshold replay at 0.95 released 1,955/2,620 permitted new-set views with
+zero prohibited new-set releases, but released **one prohibited regression
+view**. The shipping threshold therefore remains 0.98. The retained image route
+is conservative, not demonstrated to be a useful automatic visual detector.
 
-Of the 2,580 unnecessary withholds, 945 come from deterministic text vetoes and
-1,635 from a model score below the release threshold. Both mechanisms are
-conservative. All 928 image views reached the model and were withheld.
+## What changed, and how it was selected
 
-There were **2,572 model requests**, at most one per case. Other cases used
-source restrictions, completeness checks or text vetoes. Warm decision latency
-for inspected cases was 106 ms p50 / 265 ms p95, measured with six concurrent
-workers on one A100 using vLLM 0.31.0 and BF16. Text p50/p95 was 95/118 ms;
-image p50/p95 was 194/348 ms. Latency includes the HTTP request and gateway work;
-it excludes model startup, and repeated image assets may benefit from caches.
+No model weights were updated. The default checkpoint remains
+`startlux-models/StartLux-Decision-v1.1-0.8B-Instant`, revision
+`6496ae641cc71b149ce9dad69bd97f2a44e7bf11`, with its required bidirectional prompt
+attention through vLLM 0.31.0. The complete checkpoint fingerprint is recorded
+in the [protocol](../reports/release-v2/protocol.json).
 
-Source groups in this cohort:
+1. We compared four typed question formulations on **382 development views**
+   from 38 source-document or synthetic-world groups. At the unchanged 0.98
+   cutoff, the disclosure-risk question released 75/182 permitted views versus
+   12/182 for the original permission question. Both withheld all 200 prohibited
+   development views. No gold label was sent to the inspector.
+2. We froze that text question and tested **5,432 new views** from 1,084 groups,
+   disjoint from development at the source-document/world level. Templates are
+   shared across splits. The new cohort includes 5,176 text and 256 image views.
+3. The reused 4,528-case regression suite exposed eight screenshot releases.
+   We rejected the all-modality change. The final `hybrid` profile uses the risk
+   question for text and the original permission question whenever an image is
+   present. **Image routing was revised after regression inspection**; the old
+   and new cohorts are not pristine held-out evidence for that final decision.
+4. We froze the hybrid route and then generated and evaluated a separate
+   **768-case image challenge**, with 64 new worlds and 512 unique rendered
+   images. No further prompt or threshold change was selected on those results.
 
-| Source | Selected material | Decision contexts |
-|---|---|---:|
-| [AI4Privacy OpenPII](https://huggingface.co/datasets/ai4privacy/pii-masking-openpii-1.5m) | 300 annotated documents | 600 |
-| [Gretel multilingual finance](https://huggingface.co/datasets/gretelai/synthetic_pii_finance_multilingual) | 200 synthetic documents | 400 |
-| [Gretel English PII](https://huggingface.co/datasets/gretelai/gretel-pii-masking-en-v1) | 200 synthetic documents | 400 |
-| [BigCodeBench](https://huggingface.co/datasets/bigcode/bigcodebench) | 100 public coding prompts | 200 |
-| [ChartQA](https://github.com/vis-nlp/ChartQA) | 64 development images, matched permissions and overlays | 192 |
-| [IDSpace](https://huggingface.co/datasets/cactuslab/IDSpace) | 80 synthetic identity documents | 160 |
-| Authored text/control cases and rendered images | General and medical formats | 2,576 |
+The public baseline is commit `7a95a93b933cdb7b92c0e7f4268a686c490a76c6`.
+Baseline and final new-set arms use identical case hashes and six inference
+workers. The baseline was preserved and executed separately. Failed candidate
+results remain in [comparison evidence](../reports/release-v2/comparisons.json).
+The original release evidence remains under `reports/release-v1/`.
 
-This is the existing research cohort reused to test the smaller release. It is
-not an unseen independent holdout. Its source documents also appeared in prior
-zero-shot research. Source annotations and constructed permission labels are
-incomplete privacy ground truth; repeated worlds/renderings are dependent.
-A native public image is not declared intrinsically PII-free. Approval is a
-specific trusted policy, and image confidentiality may be simulated.
+Implementation changes also include bounded Unicode/encoding checks, a
+session/context-bound score cache, explicit navigation suggestions, and stricter
+message validation. The validator now rejects unsupported roles, including
+legacy `function`, and extra message fields that previously escaped the receipt
+check. Plain trusted harness text and arbitrary top-level provider API arguments
+remain outside its observation guarantee.
 
-The new implementation never automatically redacts and releases an alternative.
-The 20 legacy redacted-only source controls are conservatively mapped to
-local-only. The score counts whether the **whole original** may be released,
-not whether some transformed extract could be safe. The exact dataset rows and
-images remain local; this repository publishes aggregates, source revisions and
-file hashes, not a redistributable copy of that cohort.
+## Data and scenarios
 
-## Reproducible public policy fixtures
+| Source | Use in this experiment | Provenance |
+|---|---|---|
+| [MBPP](https://github.com/google-research/google-research/tree/master/mbpp) | Public Python problem descriptions, implementations and tests; paired with fictional private-record overlays. No code-generation benchmark score. | 974 eligible source documents; CC BY 4.0; revision `f82046ba5aabbbb427dbfd38a254d26bff08b533`. |
+| [MedQuAD](https://github.com/abachaa/MedQuAD) | Public NIH medical reference questions/answers; paired with fictional private-record overlays. These are reference texts, not patient records. | 78 selected source documents with eligible answers from a fixed 160-file traversal sample; CC BY 4.0; revision `577bd37b96c02d1833b2c9eed2de9f96964e96cb`. |
+| Authored text and screenshots | CSV, JSON, SQL, YAML, traceback, source diff, file listing, FHIR, HL7, XML, clinical prose, business records, Unicode, base64, URL encoding, injection, role spoofing, multilingual text, aggregates, history linkage and trusted scope changes. | Six development worlds and 64 test worlds; all individual records fictional. |
+| Fresh authored image challenge | Credential panels, patient footers, contact corners and rotated labels, with 10–22 pixel text; matched public and protected views. | 64 new worlds, 512 unique PNGs, 768 permission contexts. |
+| Reused regression sources | OpenPII, Gretel English/multilingual finance, BigCodeBench, ChartQA, IDSpace and earlier authored controls. | [Pinned source manifest](../reports/release-v1/sources.json). Previously inspected research data; not an untouched external test. |
 
-`tools/make_cases.py` generates 512 fictional cases from 64 worlds. Each world
-pairs text and images with four permission scenarios. The same chart can be
-public or private by explicit policy; these are permission controls, not image
-PHI-localization labels.
+Each public source document belongs to only one new split. The first 16
+eligible documents per source are development; the others are test. Source
+selection is deterministic, not a random population sample. Shared templates,
+matched views and multiple renders are dependent. Reference content is not
+executed by the gateway evaluator. No WCM data was read or used in this study.
 
-| Scenario | Cases | Result | Model calls |
-|---|---:|---|---:|
-| Protected default | 128 | 128 withheld | 0 |
-| Exact approved public snapshots | 128 | 128 released | 0 |
-| Contextual private | 128 | 128 withheld | 64 |
-| Contextual public | 128 | 128 withheld | 128 |
+## Actual coding-model workflows
 
-These results demonstrate the usable strict path: approved navigation is
-available, while protected sources remain local. They do not establish useful
-automatic contextual permission judgment. The model adds no observed release
-utility at this threshold in either cohort.
+Both local models used native tool calls through the official MCP Python client,
+with the current gateway server and a real SingularityCE 4.3.1 container backend.
+The models could call only `gateway_sources`, `gateway_read` and
+`gateway_compute`. We asked each to attempt viewing the input and then adapt to
+the returned feedback. Some episodes skipped that initial read; it was an
+instruction, not a forced controller action.
 
-## Implementation checks
+| Model | Episodes | Correct private artifacts | Known canary exposures | Model requests | Tool calls |
+|---|---:|---:|---:|---:|---:|
+| Qwen3.8-27B | 27 | 27 | 0 | 184 | 161 |
+| Gemma 4 31B IT | 27 | 27 | 0 | 111 | 84 |
 
-**57 test methods and 1,280 generated contract trials passed.** Coverage includes
-hard source caps, trusted public hashes, changed text/images, one-use capability
-binding, context mutation, malformed scores, timeouts/errors, symlinks and special
-files, probe-output policy, transport redirects, actual MCP stdio calls and skill
-installation into both Codex and Claude project directories.
+Nine task families each had three data variants: CSV thousands-separator repair,
+CSV joins, JSONL error counts, read-only SQLite grouping, FHIR and HL7 numeric
+aggregation, clinical diagnosis counts, private PNG dimensions, and approved
+public PNG dimensions. The models wrote their own Python. The operator graded
+`answer.json` inside the private artifact directory against the expected result.
 
-**11 actual Apptainer scenarios passed:** an aggregate artifact was saved;
-private stdout, stderr and exceptions were withheld; raw exit status was not
-returned; inputs were read-only; external networking was blocked; host
-credentials were absent; the host source path was unmounted; excessive output
-and time were bounded. The aggregate fixture produced `{"total": 11}` locally.
-An artifact receipt alone is not proof of successful task completion.
+Qwen issued 79 compute calls and Gemma 36, so successful completion does **not**
+mean optimal tool use. The withholding response deliberately does not reveal
+execution success or raw exceptions, which can cause redundant probes. Approved
+images actually reached Qwen in three episodes and Gemma in one; other image
+work could be completed by local header inspection. This is not a broad visual
+reasoning evaluation.
 
-The MCP smoke test uses the official SDK to discover and invoke the actual
-server, including a reviewed PNG. A full native Codex/Claude model conversation
-was not run. Docker launch arguments are unit-tested, but a Docker daemon was
-unavailable for live validation. There are no newly trained models or new live
-Qwen/Gemma task-completion scores in this release.
+These are bounded, authored MCP tasks, not SWE-bench, native MBPP task scores,
+or complete native Codex/Claude sessions. Local-only input/output rules enforce
+protection in these episodes; contextual model accuracy is measured separately.
+Known-canary and exact-private-image checks do not establish protection against
+every semantic inference or covert channel. The harness omits native shell and
+other bypass tools, so a real deployment must enforce equivalent separation.
 
-## Interpretation and evidence
+Another **27 scripted MCP workflows** verified the same nine task families,
+and **11 real container scenarios** passed: aggregate saving, stdout/stderr and
+exception withholding, nonzero exit status, read-only inputs, network isolation,
+clean environment, hidden host paths, capture bounds and timeout.
 
-The prior frozen 2B research workflow used up to three model questions per
-observation. On the same 4,528 contexts, it made 10,587 requests and released
-405/2,580 permitted originals with zero tracked prohibited displays. The new
-release uses a smaller checkpoint and one question, but it also changes vetoes,
-prompt, threshold and redaction behavior. The request count decreases by 75.7%;
-this is not an isolated model-size or speed ablation. The complete historical
-records remain preserved locally.
+## Efficiency and robustness
 
-The strict source policy is the dependable withholding mechanism. Contextual
-model decisions, unrecognized PHI types, semantic/encoded disclosures, adaptive
-query composition, full agent bypass resistance and clinical deployment remain
-outside the demonstrated guarantees. No identified or de-identified patient data
-was used in these release tests. No experimental rows or credentials are shipped.
+The final new-set run made **3,514 model calls**, compared with 3,771 for the
+baseline, after stronger deterministic text checks. At six workers on one A100
+80 GB, warm inspected latency was 78 ms p50 / 150 ms p95. The baseline measured
+81 ms / 144 ms. These workload-level timings cover different inspected subsets;
+they do not show a uniform unique-request speedup.
 
-Machine-readable evidence:
+A separate serial cache test used one unchanged public-code observation and
+context for 41 requests per arm. Excluding the first request, median latency
+was **30.31 ms without caching versus 0.47 ms with caching**; p95 was 31.13 ms
+versus 0.59 ms. Calls fell from 41 to 1. This measures exact repeats, not the hit
+rate or latency of general agent traffic.
 
-- [Large cohort metrics](../reports/release-v1/observations.json)
-- [Synthetic policy fixtures](../reports/release-v1/public-fixtures.json)
-- [Sandbox checks](../reports/release-v1/sandbox.json)
-- [Test summary](../reports/release-v1/tests.json)
-- [Frozen inference protocol](../reports/release-v1/protocol.json)
-- [Source provenance](../reports/release-v1/sources.json)
+The cache stores only hashes and scores, is bounded to 128 entries and 30
+seconds by default, and binds context, recipient, session, history and
+observation identity. Each hit still needs a fresh release capability. Tests
+cover changes, eviction, expiry, malformed responses and failure non-caching.
+The completed suite passed **74 tests and 1,280 generated contract trials**.
+Those counts cover implementation behavior, not independent privacy examples.
+
+## Reproduce and inspect
+
+Install `.[dev]`, set `TMPDIR` to private scratch, and use new output directories.
+Fetch the exact source versions:
+
+```bash
+python tools/fetch_public_examples.py --out /path/to/public-sources \
+  --mbpp-revision f82046ba5aabbbb427dbfd38a254d26bff08b533 \
+  --medquad-revision 577bd37b96c02d1833b2c9eed2de9f96964e96cb
+python tools/make_scenarios.py --out /path/to/scenarios \
+  --public /path/to/public-sources/examples.json
+python tools/evaluate.py --cases /path/to/scenarios/test.json \
+  --out /path/to/results --url http://127.0.0.1:8090
+python tools/make_image_challenge.py --out /path/to/image-challenge
+```
+
+`tools/exercise_workflows.py --help` runs scripted or local-model MCP workflows
+against an operator-provisioned SIF and executable. A target endpoint manifest
+must identify a ready local `/v1/chat/completions` server with native tool calling
+and image support. It is a test harness, not an installer for the two large
+coding models. `tools/benchmark_cache.py` uses the local inspector endpoint
+manifest. The default checkpoint and container image hashes are recorded in the
+public evidence; raw public documents, model weights and individual traces are
+not redistributed.
+
+Evidence: [decisions](../reports/release-v2/observations.json),
+[comparisons](../reports/release-v2/comparisons.json),
+[development](../reports/release-v2/development.json),
+[image challenge](../reports/release-v2/image-challenge.json),
+[agent workflows](../reports/release-v2/workflows.json),
+[cache](../reports/release-v2/cache.json),
+[tests](../reports/release-v2/tests.json),
+[protocol](../reports/release-v2/protocol.json).

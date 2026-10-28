@@ -1,0 +1,515 @@
+{
+  "complete": true,
+  "training": false,
+  "arms": {
+    "baseline-test": {
+      "overall": {
+        "cases": 5432,
+        "restricted": 2812,
+        "restricted_withheld": 2812,
+        "prohibited_original_releases": 0,
+        "permitted": 2620,
+        "permitted_released": 132,
+        "unnecessary_withholds": 2488,
+        "model_calls": 3771,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 5172,
+          "show": 132,
+          "hold": 128
+        },
+        "reasons": {
+          "sensitive_signal": 1341,
+          "view_not_permitted": 3703,
+          "exact_trusted_view": 64,
+          "source_local_only": 64,
+          "approved_view_changed": 64,
+          "source_denied": 64,
+          "incomplete_inspection": 64,
+          "model_permitted": 68
+        },
+        "inspected_latency_ms": {
+          "n": 3771,
+          "p50": 80.722376704216,
+          "p95": 143.67654360830784
+        }
+      },
+      "by_kind": {
+        "image": {
+          "cases": 256,
+          "restricted": 128,
+          "restricted_withheld": 128,
+          "prohibited_original_releases": 0,
+          "permitted": 128,
+          "permitted_released": 0,
+          "unnecessary_withholds": 128,
+          "model_calls": 256,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 256
+          },
+          "reasons": {
+            "view_not_permitted": 256
+          },
+          "inspected_latency_ms": {
+            "n": 256,
+            "p50": 156.68089408427477,
+            "p95": 202.17876695096493
+          }
+        },
+        "text": {
+          "cases": 5176,
+          "restricted": 2684,
+          "restricted_withheld": 2684,
+          "prohibited_original_releases": 0,
+          "permitted": 2492,
+          "permitted_released": 132,
+          "unnecessary_withholds": 2360,
+          "model_calls": 3515,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 4916,
+            "show": 132,
+            "hold": 128
+          },
+          "reasons": {
+            "sensitive_signal": 1341,
+            "view_not_permitted": 3447,
+            "exact_trusted_view": 64,
+            "source_local_only": 64,
+            "approved_view_changed": 64,
+            "source_denied": 64,
+            "incomplete_inspection": 64,
+            "model_permitted": 68
+          },
+          "inspected_latency_ms": {
+            "n": 3515,
+            "p50": 80.243906006217,
+            "p95": 92.38008037209511
+          }
+        }
+      },
+      "case_sha256": "aaca6f5e686da0b5def8774d8ed1cada52f055d7085a0f61af962a2fbb8ed521",
+      "source_sha256": {
+        "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+        "jev_gtw/core.py": "6b185b66b08f3c9a2bce9a39eb3579319ee926b0cee47dcc362834d62bd96f65",
+        "jev_gtw/judge.py": "15fcffa9ce9d5fe11eb3e627b8187e4ef22aa93224e344ff11a7ba1812c8d721",
+        "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+        "jev_gtw/signals.py": "1ace5d92291135d16cda98c5fe853477f4769636ae918872945d6c198f2b79e5",
+        "tools/evaluate.py": "7ba24452060353bc88c7eb902d51a710d0b491c4d8c48533c96c098e199c5c45"
+      },
+      "question_profile": "permission",
+      "threshold": 0.98
+    },
+    "improved-test": {
+      "overall": {
+        "cases": 5432,
+        "restricted": 2812,
+        "restricted_withheld": 2812,
+        "prohibited_original_releases": 0,
+        "permitted": 2620,
+        "permitted_released": 1149,
+        "unnecessary_withholds": 1471,
+        "model_calls": 3514,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 4155,
+          "show": 1149,
+          "hold": 128
+        },
+        "reasons": {
+          "sensitive_signal": 1598,
+          "view_not_permitted": 2429,
+          "model_permitted": 1085,
+          "exact_trusted_view": 64,
+          "approved_view_changed": 64,
+          "source_local_only": 64,
+          "source_denied": 64,
+          "incomplete_inspection": 64
+        },
+        "inspected_latency_ms": {
+          "n": 3514,
+          "p50": 78.68545968085527,
+          "p95": 129.12596575915813
+        }
+      },
+      "by_kind": {
+        "image": {
+          "cases": 256,
+          "restricted": 128,
+          "restricted_withheld": 128,
+          "prohibited_original_releases": 0,
+          "permitted": 128,
+          "permitted_released": 0,
+          "unnecessary_withholds": 128,
+          "model_calls": 256,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 256
+          },
+          "reasons": {
+            "view_not_permitted": 256
+          },
+          "inspected_latency_ms": {
+            "n": 256,
+            "p50": 143.33330001682043,
+            "p95": 182.7238481491804
+          }
+        },
+        "text": {
+          "cases": 5176,
+          "restricted": 2684,
+          "restricted_withheld": 2684,
+          "prohibited_original_releases": 0,
+          "permitted": 2492,
+          "permitted_released": 1149,
+          "unnecessary_withholds": 1343,
+          "model_calls": 3258,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 3899,
+            "show": 1149,
+            "hold": 128
+          },
+          "reasons": {
+            "sensitive_signal": 1598,
+            "view_not_permitted": 2173,
+            "model_permitted": 1085,
+            "exact_trusted_view": 64,
+            "approved_view_changed": 64,
+            "source_local_only": 64,
+            "source_denied": 64,
+            "incomplete_inspection": 64
+          },
+          "inspected_latency_ms": {
+            "n": 3258,
+            "p50": 77.67080329358578,
+            "p95": 93.44224631786346
+          }
+        }
+      },
+      "case_sha256": "aaca6f5e686da0b5def8774d8ed1cada52f055d7085a0f61af962a2fbb8ed521",
+      "source_sha256": {
+        "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+        "jev_gtw/core.py": "aec443d3f5ce664a85eb526057fa1950cd15f45bb99d7ef4e848ece150ff45ca",
+        "jev_gtw/judge.py": "771cc3d73a5031db6e6b9ce4719d56d9f1986e3a3697cc33d5326253421568d5",
+        "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+        "jev_gtw/signals.py": "a3aadeb86ce38aebf5596d302a54fc8bbca0cf3c28f524a51ac3b11fb5dd388f",
+        "tools/evaluate.py": "5e56b2f4e92caea24a4b4152b5a7b779d5efbf256be04aeccfd6000d96c32ad7"
+      },
+      "question_profile": "risk",
+      "threshold": 0.98
+    },
+    "legacy-regression": {
+      "overall": {
+        "cases": 4528,
+        "restricted": 1948,
+        "restricted_withheld": 1940,
+        "prohibited_original_releases": 8,
+        "permitted": 2580,
+        "permitted_released": 359,
+        "unnecessary_withholds": 2221,
+        "model_calls": 2568,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 4141,
+          "show": 367,
+          "hold": 20
+        },
+        "reasons": {
+          "sensitive_signal": 1880,
+          "view_not_permitted": 2201,
+          "model_permitted": 367,
+          "source_denied": 20,
+          "source_local_only": 40,
+          "incomplete_inspection": 20
+        },
+        "inspected_latency_ms": {
+          "n": 2568,
+          "p50": 89.03266675770283,
+          "p95": 276.4259409159422
+        }
+      },
+      "by_kind": {
+        "image": {
+          "cases": 928,
+          "restricted": 336,
+          "restricted_withheld": 328,
+          "prohibited_original_releases": 8,
+          "permitted": 592,
+          "permitted_released": 65,
+          "unnecessary_withholds": 527,
+          "model_calls": 928,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 855,
+            "show": 73
+          },
+          "reasons": {
+            "view_not_permitted": 855,
+            "model_permitted": 73
+          },
+          "inspected_latency_ms": {
+            "n": 928,
+            "p50": 181.27669673413038,
+            "p95": 348.57654199004173
+          }
+        },
+        "text": {
+          "cases": 3600,
+          "restricted": 1612,
+          "restricted_withheld": 1612,
+          "prohibited_original_releases": 0,
+          "permitted": 1988,
+          "permitted_released": 294,
+          "unnecessary_withholds": 1694,
+          "model_calls": 1640,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 3286,
+            "show": 294,
+            "hold": 20
+          },
+          "reasons": {
+            "sensitive_signal": 1880,
+            "view_not_permitted": 1346,
+            "model_permitted": 294,
+            "source_denied": 20,
+            "source_local_only": 40,
+            "incomplete_inspection": 20
+          },
+          "inspected_latency_ms": {
+            "n": 1640,
+            "p50": 81.99712447822094,
+            "p95": 99.66644644737244
+          }
+        }
+      },
+      "case_sha256": "2151515b8002abdb72c799d9162d468a81a0688294ebdf074c1cc2e4af848831",
+      "source_sha256": {
+        "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+        "jev_gtw/core.py": "aec443d3f5ce664a85eb526057fa1950cd15f45bb99d7ef4e848ece150ff45ca",
+        "jev_gtw/judge.py": "771cc3d73a5031db6e6b9ce4719d56d9f1986e3a3697cc33d5326253421568d5",
+        "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+        "jev_gtw/signals.py": "a3aadeb86ce38aebf5596d302a54fc8bbca0cf3c28f524a51ac3b11fb5dd388f",
+        "tools/evaluate.py": "5e56b2f4e92caea24a4b4152b5a7b779d5efbf256be04aeccfd6000d96c32ad7"
+      },
+      "question_profile": "risk",
+      "threshold": 0.98
+    },
+    "final-test": {
+      "overall": {
+        "cases": 5432,
+        "restricted": 2812,
+        "restricted_withheld": 2812,
+        "prohibited_original_releases": 0,
+        "permitted": 2620,
+        "permitted_released": 1149,
+        "unnecessary_withholds": 1471,
+        "model_calls": 3514,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 4155,
+          "show": 1149,
+          "hold": 128
+        },
+        "reasons": {
+          "sensitive_signal": 1598,
+          "view_not_permitted": 2429,
+          "model_permitted": 1085,
+          "exact_trusted_view": 64,
+          "approved_view_changed": 64,
+          "source_local_only": 64,
+          "source_denied": 64,
+          "incomplete_inspection": 64
+        },
+        "inspected_latency_ms": {
+          "n": 3514,
+          "p50": 78.39189935475588,
+          "p95": 149.73063208162785
+        }
+      },
+      "by_kind": {
+        "image": {
+          "cases": 256,
+          "restricted": 128,
+          "restricted_withheld": 128,
+          "prohibited_original_releases": 0,
+          "permitted": 128,
+          "permitted_released": 0,
+          "unnecessary_withholds": 128,
+          "model_calls": 256,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 256
+          },
+          "reasons": {
+            "view_not_permitted": 256
+          },
+          "inspected_latency_ms": {
+            "n": 256,
+            "p50": 173.11873752623796,
+            "p95": 215.5869212001562
+          }
+        },
+        "text": {
+          "cases": 5176,
+          "restricted": 2684,
+          "restricted_withheld": 2684,
+          "prohibited_original_releases": 0,
+          "permitted": 2492,
+          "permitted_released": 1149,
+          "unnecessary_withholds": 1343,
+          "model_calls": 3258,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 3899,
+            "show": 1149,
+            "hold": 128
+          },
+          "reasons": {
+            "sensitive_signal": 1598,
+            "view_not_permitted": 2173,
+            "model_permitted": 1085,
+            "exact_trusted_view": 64,
+            "approved_view_changed": 64,
+            "source_local_only": 64,
+            "source_denied": 64,
+            "incomplete_inspection": 64
+          },
+          "inspected_latency_ms": {
+            "n": 3258,
+            "p50": 77.28120777755976,
+            "p95": 89.09689635038376
+          }
+        }
+      },
+      "case_sha256": "aaca6f5e686da0b5def8774d8ed1cada52f055d7085a0f61af962a2fbb8ed521",
+      "source_sha256": {
+        "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+        "jev_gtw/core.py": "aec443d3f5ce664a85eb526057fa1950cd15f45bb99d7ef4e848ece150ff45ca",
+        "jev_gtw/judge.py": "1ee2d74e1e52a2b53ccce429f59fbe45f47ced337a108b72b671340f4b55a0e2",
+        "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+        "jev_gtw/signals.py": "a3aadeb86ce38aebf5596d302a54fc8bbca0cf3c28f524a51ac3b11fb5dd388f",
+        "tools/evaluate.py": "261fc654ae0e52e3bf37516303ba91cddf1dfe78d661e5f7b073a508c50fc342"
+      },
+      "question_profile": "hybrid",
+      "threshold": 0.98
+    },
+    "final-regression": {
+      "overall": {
+        "cases": 4528,
+        "restricted": 1948,
+        "restricted_withheld": 1948,
+        "prohibited_original_releases": 0,
+        "permitted": 2580,
+        "permitted_released": 294,
+        "unnecessary_withholds": 2286,
+        "model_calls": 2568,
+        "inspection_failures": 0,
+        "actions": {
+          "local": 4214,
+          "show": 294,
+          "hold": 20
+        },
+        "reasons": {
+          "sensitive_signal": 1880,
+          "view_not_permitted": 2274,
+          "model_permitted": 294,
+          "source_denied": 20,
+          "source_local_only": 40,
+          "incomplete_inspection": 20
+        },
+        "inspected_latency_ms": {
+          "n": 2568,
+          "p50": 89.90857936441898,
+          "p95": 284.1323595494032
+        }
+      },
+      "by_kind": {
+        "image": {
+          "cases": 928,
+          "restricted": 336,
+          "restricted_withheld": 336,
+          "prohibited_original_releases": 0,
+          "permitted": 592,
+          "permitted_released": 0,
+          "unnecessary_withholds": 592,
+          "model_calls": 928,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 928
+          },
+          "reasons": {
+            "view_not_permitted": 928
+          },
+          "inspected_latency_ms": {
+            "n": 928,
+            "p50": 190.01324009150267,
+            "p95": 377.6568453758955
+          }
+        },
+        "text": {
+          "cases": 3600,
+          "restricted": 1612,
+          "restricted_withheld": 1612,
+          "prohibited_original_releases": 0,
+          "permitted": 1988,
+          "permitted_released": 294,
+          "unnecessary_withholds": 1694,
+          "model_calls": 1640,
+          "inspection_failures": 0,
+          "actions": {
+            "local": 3286,
+            "show": 294,
+            "hold": 20
+          },
+          "reasons": {
+            "sensitive_signal": 1880,
+            "view_not_permitted": 1346,
+            "model_permitted": 294,
+            "source_denied": 20,
+            "source_local_only": 40,
+            "incomplete_inspection": 20
+          },
+          "inspected_latency_ms": {
+            "n": 1640,
+            "p50": 83.70237331837416,
+            "p95": 99.91830587387085
+          }
+        }
+      },
+      "case_sha256": "2151515b8002abdb72c799d9162d468a81a0688294ebdf074c1cc2e4af848831",
+      "source_sha256": {
+        "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+        "jev_gtw/core.py": "aec443d3f5ce664a85eb526057fa1950cd15f45bb99d7ef4e848ece150ff45ca",
+        "jev_gtw/judge.py": "1ee2d74e1e52a2b53ccce429f59fbe45f47ced337a108b72b671340f4b55a0e2",
+        "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+        "jev_gtw/signals.py": "a3aadeb86ce38aebf5596d302a54fc8bbca0cf3c28f524a51ac3b11fb5dd388f",
+        "tools/evaluate.py": "261fc654ae0e52e3bf37516303ba91cddf1dfe78d661e5f7b073a508c50fc342"
+      },
+      "question_profile": "hybrid",
+      "threshold": 0.98
+    }
+  },
+  "threshold_replays": {
+    "final-test": {
+      "threshold": 0.95,
+      "permitted": 2620,
+      "permitted_released": 1955,
+      "restricted": 2812,
+      "prohibited_releases": 0,
+      "method": "Offline threshold replay of fixed scores; not a new model run or the shipping default."
+    },
+    "final-regression": {
+      "threshold": 0.95,
+      "permitted": 2580,
+      "permitted_released": 309,
+      "restricted": 1948,
+      "prohibited_releases": 1,
+      "method": "Offline threshold replay of fixed scores; not a new model run or the shipping default."
+    }
+  },
+  "baseline_commit": "7a95a93b933cdb7b92c0e7f4268a686c490a76c6",
+  "rejected_candidate": "The all-modality risk question released eight protected credential screenshots in the reused regression suite."
+}

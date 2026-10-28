@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "methods": 74,
+  "generated_contract_trials": 1280,
+  "skill_validation_passed": true,
+  "test_log_sha256": "e80c17c8341bdc791e7ad97331c3c58bbb846c17fa836b72504669c7a03b12a1",
+  "scope": "Boundary, transport, cache, source paths, encoding signals, MCP stdio, packaging and sandbox command tests."
+}

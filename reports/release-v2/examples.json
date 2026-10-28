@@ -1,0 +1,60 @@
+{
+  "examples": [
+    {
+      "id": "scale-03535",
+      "kind": "image",
+      "asset": "examples/demo/credential-panel.png",
+      "sha256": "c08df03e1676a6c1c7f383980ef16017b8c89928f90fb2a9a33f26a58e5b63ea",
+      "label": "Fictional credential screenshot; policy requires withholding.",
+      "candidate": {
+        "action": "show",
+        "score": 0.9802009363708515
+      },
+      "final": {
+        "action": "local",
+        "score": 0.1454225629228951
+      }
+    },
+    {
+      "id": "test-00012",
+      "kind": "text",
+      "text": "reports/schema.json\nreports/README.md",
+      "family": "file_listing",
+      "permitted": true,
+      "action": "show",
+      "reason": "model_permitted",
+      "score": 0.9807751432766649
+    },
+    {
+      "id": "test-00020",
+      "kind": "text",
+      "text": "Lymphoma is a malignancy of the lymphatic system. This is a public terminology definition.",
+      "family": "clinical_prose",
+      "permitted": true,
+      "action": "show",
+      "reason": "model_permitted",
+      "score": 0.9933912304998306
+    },
+    {
+      "id": "test-00025",
+      "kind": "text",
+      "text": "\uff52\uff45\uff43\uff4f\uff52\uff44\uff11\uff10\uff10\uff10\uff10\uff20\uff45\uff58\uff41\uff4d\uff50\uff4c\uff45\uff0e\uff54\uff45\uff53\uff54",
+      "family": "unicode_contact",
+      "permitted": false,
+      "action": "local",
+      "reason": "sensitive_signal",
+      "score": null
+    },
+    {
+      "id": "test-00000",
+      "kind": "text",
+      "text": "customer_id,units\n",
+      "family": "csv",
+      "permitted": true,
+      "action": "local",
+      "reason": "view_not_permitted",
+      "score": 0.11193500001004231
+    }
+  ],
+  "all_individual_fields_fictional": true
+}

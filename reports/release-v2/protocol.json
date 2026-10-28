@@ -1,0 +1,56 @@
+{
+  "training": false,
+  "model": "startlux-models/StartLux-Decision-v1.1-0.8B-Instant",
+  "revision": "6496ae641cc71b149ce9dad69bd97f2a44e7bf11",
+  "checkpoint_sha256": "ee91ef53043dbcc599f7b9aee7a955b4c866cf71be1fc2682cadd1ee0303a9d5",
+  "threshold": 0.98,
+  "workers": 6,
+  "question_profile": "hybrid",
+  "case_sha256": "aaca6f5e686da0b5def8774d8ed1cada52f055d7085a0f61af962a2fbb8ed521",
+  "source_sha256": {
+    "jev_gtw/__init__.py": "10dd5c7949ea88f80118fc38792501466f48fd26fc599512dd31cdb2a03453e3",
+    "jev_gtw/core.py": "aec443d3f5ce664a85eb526057fa1950cd15f45bb99d7ef4e848ece150ff45ca",
+    "jev_gtw/judge.py": "1ee2d74e1e52a2b53ccce429f59fbe45f47ced337a108b72b671340f4b55a0e2",
+    "jev_gtw/images.py": "3277ac8bc0829ddddf20a74a947e3a9fc360d5765eb87a37a805e728800a2cfc",
+    "jev_gtw/signals.py": "a3aadeb86ce38aebf5596d302a54fc8bbca0cf3c28f524a51ac3b11fb5dd388f",
+    "tools/evaluate.py": "261fc654ae0e52e3bf37516303ba91cddf1dfe78d661e5f7b073a508c50fc342",
+    "jev_gtw/service.py": "787697abff3bd2ace2c739daf95620ad2881013e87f1fac3c9319b45637e4ae5",
+    "jev_gtw/sandbox.py": "d00d453e1a1a5789fe0919fbe33b55f3fe41767c1301c222e998903aaeb5c379",
+    "jev_gtw/mcp_server.py": "1d5efdb365af2d20d0db90f3c2130174cfbf7047640a09fbbce18acd17b43841",
+    "tools/exercise_workflows.py": "407957997b2877d78fdead050bb6f722d5254718578bae58112c8067e1fffb58",
+    "tools/benchmark_cache.py": "997aaa27db8bed4b628ec90cf30e90a41df02e6f85e9cc19b4c0d3c7d83ece5b",
+    "tools/make_scenarios.py": "7b46a0541587e35f0527f75e11bb9771691c2f6afc3e7089576651a5ccdbd65f",
+    "tools/make_image_challenge.py": "72fa3fe7e2327ce72fa84fff6b951c37728ac4e4d7914118dfeb31be1b7b2ce3",
+    "tools/fetch_public_examples.py": "6eb8b16a059f5dfec08ccb275f8e071f71f85f5dbbf50ba947242360a91177fb"
+  },
+  "cases": 5432,
+  "posthoc_tuning": true,
+  "automatic_redaction": false,
+  "legacy_redacted_policy": "Map redacted-only sources to local-only: no automatic candidate release.",
+  "scoring": "Complete original view release vs constructed permission labels; not semantic leak detection.",
+  "study": "release-v2",
+  "complete": true,
+  "selection": {
+    "development_cases": 382,
+    "new_test_cases": 5432,
+    "modality_routing_changed_after_legacy_regression": true,
+    "fresh_image_challenge_cases": 768,
+    "test_not_pristine_for_final_image_routing": true
+  },
+  "runtime": {
+    "vllm": "0.31.0",
+    "attention": "bidirectional",
+    "precision": "bfloat16",
+    "gpu": "one NVIDIA A100 80 GB",
+    "training": false
+  },
+  "original_threshold_retained": true,
+  "notes": [
+    "Text question chosen on development data. Image routing reverted after regression failures.",
+    "No weights updated; policy labels and synthetic workloads are constructed. No clinical PHI benchmark or universal safety claim."
+  ],
+  "live_agent_episodes": 54,
+  "scripted_workflows": 27,
+  "sandbox_scenarios": 11,
+  "posthoc_scope": "Image routing was revised after the reused regression suite; text question selected on development data and the 0.98 threshold retained. A separate image challenge followed the fix."
+}

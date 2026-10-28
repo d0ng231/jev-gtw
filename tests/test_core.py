@@ -144,6 +144,26 @@ class CoreTests(unittest.TestCase):
         g=Gateway();o=Observation(text='SENSITIVE_TEXT');self.deliver(g,o)
         self.assertNotIn('SENSITIVE_TEXT',json.dumps(g.events)+repr(o))
 
+    def test_legacy_or_unknown_roles_cannot_bypass_receipts(self):
+        for role in ['function','TOOL','unknown',None]:
+            with self.subTest(role=role), self.assertRaises(ValueError):
+                Gateway().validate_request(self.context,[{'role':role,'content':'unreviewed source capture'}])
+
+    def test_extra_api_fields_cannot_smuggle_observations(self):
+        for field in ['attachments','image_url','documents','metadata']:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                Gateway().validate_request(self.context,[{'role':'user','content':'hello',field:'unreviewed source capture'}])
+
+    def test_cached_assessment_still_issues_fresh_bound_capabilities(self):
+        gate=Gateway(lambda *_:Assessment(.99,cached=True))
+        first=gate.inspect(self.context,Observation(text='schema'),Access('contextual'))
+        second=gate.inspect(self.context,Observation(text='schema'),Access('contextual'))
+        self.assertNotEqual(first.capability,second.capability)
+        self.assertTrue(gate.events[-1]['cache_hit']);self.assertEqual(gate.events[-1]['model_calls'],0)
+        with self.assertRaises(ValueError):gate.messages(replace(self.context,session='other'),second,tool_call_id='x')
+        gate.messages(self.context,first,tool_call_id='x')
+        gate.messages(self.context,second,tool_call_id='y')
+
     def test_invalid_configuration(self):
         for threshold in [True,0,1.1,float('nan')]:
             with self.assertRaises(ValueError):Gateway(show_threshold=threshold)

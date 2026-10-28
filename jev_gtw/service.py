@@ -24,6 +24,7 @@ class Source:
     kind: str
     access: Access
     probe_view: str = "local"
+    public_context: str | None = None
 
 
 def read_beneath(root: Path, relative: str, limit: int) -> bytes:
@@ -53,6 +54,13 @@ class Service:
     def __init__(self, root, context, sources, gateway, runner=None):
         self.root, self.context = Path(root).resolve(strict=True), context
         self.sources, self.gateway, self.runner = dict(sources), gateway, runner
+        for handle, source in self.sources.items():
+            if not HANDLE.fullmatch(handle):
+                raise ValueError("Invalid source handle")
+            if source.public_context is not None:
+                target = self.sources.get(source.public_context)
+                if target is None or target.access.view != "approved" or source.public_context == handle:
+                    raise ValueError("Navigation must reference a separate exact approved source")
         self.history = []
         self._lock = RLock()
 
@@ -67,7 +75,8 @@ class Service:
         for handle, spec in config["sources"].items():
             if not HANDLE.fullmatch(handle) or spec.get("kind", "text") not in ("text", "png"):
                 raise ValueError("Invalid source handle or kind")
-            source = Source(spec["path"], spec.get("kind", "text"), Access(**spec.get("access", {})), spec.get("probe_view", "local"))
+            source = Source(spec["path"], spec.get("kind", "text"), Access(**spec.get("access", {})),
+                            spec.get("probe_view", "local"), spec.get("public_context"))
             if source.probe_view not in ("local", "contextual"):
                 raise ValueError("Invalid probe-output policy")
             # Validation is lexical here; actual reads use descriptor-relative opens.
@@ -84,12 +93,13 @@ class Service:
         if config.get("sandbox"):
             from .sandbox import ProbeRunner
             runner = ProbeRunner(**config["sandbox"])
-        return cls(config_path.parent / config["root"], context, sources, Gateway(judge), runner)
+        return cls(config_path.parent / config["root"], context, sources, Gateway(judge, **config.get("gateway", {})), runner)
 
     def catalog(self):
         # Handles, kinds and coarse policy are deliberately public operator metadata.
         return {"sources": [{"id": handle, "kind": source.kind, "view": source.access.view,
-                            "local_compute": source.access.local_compute and source.access.view != "deny"}
+                            "local_compute": source.access.local_compute and source.access.view != "deny",
+                            "public_context": source.public_context}
                            for handle, source in self.sources.items()],
                 "compute_available": self.runner is not None}
 
@@ -107,8 +117,25 @@ class Service:
             url = messages[1]["content"][1]["image_url"]["url"]
             result["image_base64"] = url.removeprefix("data:image/png;base64,")
         # Only admitted text/fixed feedback is added to future inspector context.
-        self.history.append(result["text"][:2048])
+        # Identical consecutive views add no evidence; avoid cycling the model
+        # context and invalidating exact-request cache entries on every retry.
+        latest = result["text"][:2048]
+        if not self.history or self.history[-1] != latest:
+            self.history.append(latest)
         del self.history[:-4]
+        return result
+
+    def _next_steps(self, source_id, source, result):
+        if result["action"] == "show":
+            return result
+        steps = []
+        if source.public_context is not None:
+            steps.append({"tool":"gateway_read", "arguments":{"source_id":source.public_context}})
+        if self.runner is not None and source.access.local_compute and source.access.view != "deny":
+            steps.append({"tool":"gateway_compute", "source_ids":[source_id]})
+        if not steps:
+            steps.append({"action":"operator_review"})
+        result["next_steps"] = steps
         return result
 
     def read(self, source_id: str):
@@ -118,13 +145,13 @@ class Service:
                 return self._held()
             # Protected/denied reads are withheld before opening the source.
             if source.access.view in ("local", "deny"):
-                return self._review(Observation(), source.access)
+                return self._next_steps(source_id, source, self._review(Observation(), source.access))
             try:
                 limit = MAX_IMAGE_BYTES if source.kind == "png" else self.gateway.max_chars * 4
                 raw = read_beneath(self.root, source.path, limit)
                 observation = (Observation(image=raw, complete=len(raw) <= limit) if source.kind == "png"
                                else Observation(text=raw.decode("utf-8"), complete=len(raw) <= limit))
-                return self._review(observation, source.access)
+                return self._next_steps(source_id, source, self._review(observation, source.access))
             except Exception:
                 # Never relay OS exceptions, filenames, parse errors or source bytes.
                 return self._held()

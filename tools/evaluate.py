@@ -48,6 +48,8 @@ def main():
     parser.add_argument('--url', default='http://127.0.0.1:8090')
     parser.add_argument('--trusted-host', action='append', default=[])
     parser.add_argument('--workers', type=int, default=4)
+    parser.add_argument('--threshold', type=float, default=.98)
+    parser.add_argument('--question-profile', choices=['hybrid','risk','permission'], default='hybrid')
     parser.add_argument('--model', default=DEFAULT_MODEL)
     parser.add_argument('--revision', default=DEFAULT_REVISION)
     parser.add_argument('--checkpoint-sha256')
@@ -63,7 +65,8 @@ def main():
     files = [root/'jev_gtw'/name for name in ['__init__.py','core.py','judge.py','images.py','signals.py']] + [Path(__file__).resolve()]
     hashes = {str(p.relative_to(root)): sha(p) for p in files}
     protocol = {'training':False, 'model':args.model,'revision':args.revision,
-                'checkpoint_sha256':args.checkpoint_sha256,'threshold':.98,'workers':args.workers,
+                'checkpoint_sha256':args.checkpoint_sha256,'threshold':args.threshold,'workers':args.workers,
+                'question_profile':args.question_profile,
                 'case_sha256':sha(args.cases),'source_sha256':hashes,'cases':len(cases),
                 'posthoc_tuning':False,'automatic_redaction':False,
                 'legacy_redacted_policy':'Map redacted-only sources to local-only: no automatic candidate release.',
@@ -84,7 +87,8 @@ def main():
                 raise ValueError('Image hash mismatch')
         policy=dict(row.get('access',{}))
         if policy.get('view')=='redacted':policy['view']='local'
-        gate=Gateway(StartLuxJudge(args.url,token=token,trusted_hosts=args.trusted_host))
+        gate=Gateway(StartLuxJudge(args.url,token=token,trusted_hosts=args.trusted_host,
+                                  question_profile=args.question_profile,cache_size=0),show_threshold=args.threshold)
         ctx=Context(**context);obs=Observation(**item)
         start=time.perf_counter();decision=gate.inspect(ctx,obs,Access(**policy))
         messages=gate.messages(ctx,decision,tool_call_id='evaluation')

@@ -109,5 +109,30 @@ class ServiceTests(unittest.TestCase):
         config['sources']['records']['path']='../private.txt';p.write_text(json.dumps(config))
         with self.assertRaises(ValueError):Service.from_config(p)
 
+    def test_withheld_read_offers_only_configured_navigation(self):
+        self.service.sources['private']=Source('private.txt','text',Access(),public_context='public')
+        result=self.service.read('private')
+        self.assertEqual(result['next_steps'],[{'tool':'gateway_read','arguments':{'source_id':'public'}}])
+        self.assertEqual(self.service.read('public')['action'],'show')
+        (self.root/'public.txt').write_text('FICTIONAL_SECRET_492')
+        self.assertEqual(self.service.read('public')['action'],'hold')
+
+    def test_navigation_does_not_authorize_unapproved_sources(self):
+        for target in ['missing','private','image_contextual']:
+            sources=dict(self.sources)
+            sources['image_contextual']=Source('image.png','png',Access('contextual'))
+            sources['private']=Source('private.txt','text',Access(),public_context=target)
+            with self.assertRaises(ValueError):Service(self.root,self.ctx,sources,Gateway())
+
+    def test_next_steps_respect_compute_availability_and_denial(self):
+        self.service.runner=object()
+        self.assertEqual(self.service.read('private')['next_steps'],[{'tool':'gateway_compute','source_ids':['private']}])
+        self.service.sources['private']=Source('private.txt','text',Access('deny'))
+        self.assertEqual(self.service.read('private')['next_steps'],[{'action':'operator_review'}])
+
+    def test_repeated_views_do_not_displace_relevant_history(self):
+        for _ in range(20):self.service.read('public')
+        self.assertEqual(self.service.history,['Public task setup.'])
+
 
 if __name__=='__main__':unittest.main()

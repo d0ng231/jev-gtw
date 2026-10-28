@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jev-gtw"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local PII/PHI data-access guardrails and MCP tools for coding agents"
 keywords = ["coding-agents", "privacy", "pii", "phi", "mcp", "agent-skills", "codex", "claude-code", "jev"]
 readme = "README.md"
@@ -20,7 +20,7 @@ Issues = "https://github.com/d0ng231/jev-gtw/issues"
 
 [project.optional-dependencies]
 mcp = ["mcp>=1.26,<2"]
-dev = ["mcp>=1.26,<2", "build>=1", "PyYAML>=6"]
+dev = ["mcp>=1.26,<2", "build>=1", "PyYAML>=6", "Pillow>=11"]
 
 [project.scripts]
 jev-gtw = "jev_gtw.cli:main"

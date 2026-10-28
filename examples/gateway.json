@@ -17,7 +17,8 @@
       }
     },
     "records": {
-      "path": "records.csv"
+      "path": "records.csv",
+      "public_context": "setup"
     },
     "public_image": {
       "path": "chart.png",

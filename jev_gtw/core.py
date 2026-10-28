@@ -85,10 +85,13 @@ class Observation:
 class Assessment:
     permitted: float
     request_sha256: str = ""
+    cached: bool = False
 
     def validate(self):
         if type(self.permitted) not in (int, float) or not math.isfinite(self.permitted) or not 0 <= self.permitted <= 1:
             raise ValueError("Expected a finite permission score")
+        if type(self.cached) is not bool:
+            raise ValueError("Expected a boolean cache indicator")
 
 
 @dataclass(frozen=True)
@@ -166,7 +169,8 @@ class Gateway:
             if type(assessment) is not Assessment:
                 raise ValueError("Expected a typed permission assessment")
             assessment.validate()
-            event.update(permitted=assessment.permitted, request_sha256=assessment.request_sha256)
+            event.update(permitted=assessment.permitted, request_sha256=assessment.request_sha256,
+                         cache_hit=assessment.cached, model_calls=0 if assessment.cached else 1)
             if assessment.permitted >= self.threshold:
                 return finish("show", "model_permitted")
             return finish(fallback, "view_not_permitted")
@@ -208,6 +212,10 @@ class Gateway:
             for message in messages:
                 if type(message) is not dict or type(message.get("content")) not in (str, list, type(None)):
                     raise ValueError("Unsupported message representation")
+                if message.get("role") not in {"system", "developer", "user", "assistant", "tool"}:
+                    raise ValueError("Unsupported message role")
+                if set(message) - {"role", "content", "tool_call_id", "name", "tool_calls"}:
+                    raise ValueError("Unsupported message fields")
                 if message.get("role") == "tool" or type(message.get("content")) is list:
                     if (self._scope(context), digest(message)) not in self._admitted:
                         raise ValueError("Unreviewed or altered observation")

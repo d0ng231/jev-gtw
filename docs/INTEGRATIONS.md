@@ -11,7 +11,7 @@ claimed; the default integration covers these three gateway tools:
 | Tool | Input | Result |
 |---|---|---|
 | `gateway_sources` | none | Operator-provided source IDs, kinds and coarse permissions. |
-| `gateway_read` | `source_id` | Reviewed text/image or fixed withholding feedback. |
+| `gateway_read` | `source_id` | Reviewed text/image or withholding feedback with configured `next_steps`. |
 | `gateway_compute` | `source_ids`, `code` | Reviewed capture and a private-artifact receipt. Requires a sandbox. |
 
 ## Install and connect
@@ -38,7 +38,9 @@ copies only the skill and refuses to overwrite an existing installation.
 The package's real stdio test uses the official MCP Python client to discover
 and call the tools, including a reviewed image. The skill is validated and its
 installation is tested for both client directory conventions. A full native
-Codex/Claude model conversation was not executed in this release study.
+Codex/Claude model conversation was not executed. The release also tests local
+Qwen and Gemma coding models through the real MCP client and isolated probes;
+see [the completed results](RESULTS.md).
 
 ## Start the smaller inspector
 
@@ -59,6 +61,20 @@ The demonstration in `examples/gateway.json` needs no live model: its setup
 and image have exact public grants, and records stay local. A contextual source
 requires a ready inspector; unavailable inference withholds the view.
 
+The default inspector profile is `hybrid`: a disclosure-risk question for text,
+the conservative permission question for images. The release threshold remains
+0.98. In the trusted `inspector` config, set `cache_size: 0` to disable caching;
+otherwise exact scores can be reused for 30 seconds, with a 128-entry bound.
+`cache_ttl` and `cache_size` are operator settings. The `risk` profile is an
+experimental all-modality comparison and failed image regression checks.
+
+For useful withholding feedback, point a protected source to an approved setup
+handle. For example, add `"public_context": "setup"` alongside its `"path"`.
+The referenced source must exist and have an exact `approved` fingerprint.
+The agent gets a `gateway_read` suggestion, plus a `gateway_compute` suggestion
+only when the source and sandbox permit it. No source bytes are opened to create
+these suggestions.
+
 ## Configure local computation
 
 Add a `sandbox` object to the trusted config. Use an existing image digest and
@@ -78,7 +94,9 @@ an absolute owner-only artifact root. Set `TMPDIR` outside `/tmp`.
 For a cluster, use `backend: "apptainer"`, `image: "/private/python.sif"`,
 `image_sha256: "<verified-sha256>"`, and optionally `executable`.
 Run `tools/smoke_sandbox.py --help` for an executable fictional-data smoke test.
-The release tested an actual Apptainer sandbox. Docker command construction
+The release tested the Apptainer-compatible backend with a real SingularityCE
+container runtime. On clusters, pass its installed executable explicitly if it
+is not on the worker's PATH. Docker command construction
 is unit-tested; a Docker daemon was unavailable for a live run.
 
 Protected files and the configuration belong outside the coding agent's

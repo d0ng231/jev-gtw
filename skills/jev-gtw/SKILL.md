@@ -16,12 +16,17 @@ the host's separation of protected storage from the agent.
 2. Call `gateway_read(source_id)` for a needed text or image view. Use only the
    returned content. `show` releases that exact view; `local` means process the
    source without viewing its records; `hold` means no view is available.
+   Follow the returned `next_steps`: an operator-configured `gateway_read`
+   suggestion points to approved task/schema context; a `gateway_compute`
+   suggestion means a sandbox and source permission are available. Request the
+   suggested context through the gateway; its bytes are still checked.
 3. For `local`, use `gateway_compute(source_ids, code)` if a sandbox is available.
    Read `/inputs/<source_id>` inside the sandbox, compute locally, and write
    results under `/outputs`. Keep identities, rows and private images out of
    stdout. Captured stdout and stderr are reviewed too. An `artifact_id` is an
    opaque receipt, not a downloadable file or proof of successful computation.
-4. Continue from permitted evidence. If a needed view is withheld, use approved
+4. Continue from permitted evidence. Avoid retrying the same withheld preview;
+   unchanged requests can reuse a short-lived decision. If a needed view is withheld, use approved
    schema/examples or a local probe. A redacted output is a new candidate that
    still needs permission; removal of obvious identifiers is insufficient.
 

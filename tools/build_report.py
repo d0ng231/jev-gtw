@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the latest completed English report from published aggregate evidence."""
+"""Build the latest completed report from release-v2 aggregate evidence."""
 import base64
 import hashlib
 import html
@@ -10,37 +10,46 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def build():
-    report=ROOT/'reports/release-v1'
-    observation=json.loads((report/'observations.json').read_text())
-    fixtures=json.loads((report/'public-fixtures.json').read_text())
-    protocol=json.loads((report/'protocol.json').read_text())
-    tests=json.loads((report/'tests.json').read_text())
-    sandbox=json.loads((report/'sandbox.json').read_text())
-    assert observation['complete'] and fixtures['complete'] and tests['passed'] and sandbox['passed']
+    report=ROOT/'reports/release-v2'
+    def load(name):return json.loads((report/name).read_text())
+    observation=load('observations.json');comparison=load('comparisons.json');images=load('image-challenge.json')
+    workflows=load('workflows.json');tests=load('tests.json');cache=load('cache.json');protocol=load('protocol.json')
+    assert all(obj.get('complete',obj.get('passed',False)) for obj in [observation,comparison,images,workflows,tests,cache,protocol])
     assert protocol['training'] is False
-    for name,value in protocol['source_sha256'].items():
-        if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=value:
-            raise ValueError('Report source differs from frozen inference implementation: '+name)
-    m=observation['overall'];f=fixtures['overall']
-    rows=''
-    for kind in ['text','image']:
-        x=observation['slices']['kind'][kind]
-        rows+=f'<tr><td>{kind.title()}</td><td>{x["cases"]:,}</td><td>{x["restricted_withheld"]:,} / {x["restricted"]:,}</td><td>{x["permitted_released"]:,} / {x["permitted"]:,}</td></tr>'
-    policy_rows=''
-    labels={'protected':'Protected default','public_snapshot':'Approved public snapshot','contextual_private':'Contextual private','contextual_public':'Contextual public'}
-    for key,label in labels.items():
-        x=fixtures['slices']['family'][key]
-        policy_rows+=f'<tr><td>{label}</td><td>{x["cases"]}</td><td>{x["actions"].get("show",0)} released</td><td>{x["model_calls"]}</td></tr>'
-    pixels=base64.b64encode((ROOT/'examples/demo/chart.png').read_bytes()).decode()
-    page=TEMPLATE.replace('{{ROWS}}',rows).replace('{{POLICY_ROWS}}',policy_rows).replace('{{IMAGE}}',pixels)
-    replacements={'CASES':f'{m["cases"]:,}','FIXTURES':str(f['cases']),'METHODS':str(tests['methods']),
-                  'TRIALS':f'{tests["generated_contract_trials"]:,}','PROBES':str(len(sandbox['scenarios'])),
-                  'CALLS':f'{m["model_calls"]:,}','P50':str(round(m['inspected_latency_ms']['p50'])),
-                  'P95':str(round(m['inspected_latency_ms']['p95']))}
-    for key,value in replacements.items():page=page.replace('{{'+key+'}}',html.escape(value))
+    for name,expected in protocol['source_sha256'].items():
+        if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=expected:
+            raise ValueError('Report implementation differs from frozen experiment: '+name)
+    def row(values):return '<tr>'+''.join('<td>'+html.escape(str(v))+'</td>' for v in values)+'</tr>'
+    arms=comparison['arms'];m=observation['overall'];rows=''
+    for label,key in [('Published baseline / new set','baseline-test'),('Final gateway / new set','final-test'),
+                      ('Rejected all-modality risk / regression','legacy-regression'),('Final gateway / regression','final-regression')]:
+        a=arms[key]['overall']
+        rows+=row([label,f"{a['cases']:,}",f"{a['prohibited_original_releases']} / {a['restricted']:,}",f"{a['permitted_released']:,} / {a['permitted']:,}"])
+    a=images['overall'];rows+=row(['Fresh image challenge',a['cases'],f"{a['prohibited_original_releases']} / {a['restricted']}",f"{a['permitted_released']} / {a['permitted']}"])
+    agent_rows='';families={}
+    for key,agent in workflows['agents'].items():
+        agent_rows+=row([agent['model'],f"{agent['artifact_pass']} / {agent['episodes']}",agent['known_canary_exposures'],agent['target_requests']])
+        for result in agent['rows']:
+            family=result['family'];families.setdefault(family,{})
+            passed,total=families[family].get(key,(0,0));families[family][key]=(passed+int(result['artifact_pass']),total+1)
+    task_rows=''.join(row([family.replace('_',' '),*(f"{families[family][model][0]} / {families[family][model][1]}" for model in ['qwen','gemma'])]) for family in families)
+    example_rows=''.join(row([e['text'],'Allowed' if e['permitted'] else 'Withhold',e['action'],e['reason']]) for e in load('examples.json')['examples'] if e['kind']=='text')
+    values={'ROWS':rows,'AGENT_ROWS':agent_rows,'TASK_ROWS':task_rows,'EXAMPLE_ROWS':example_rows,
+            'IMAGE':base64.b64encode((ROOT/'examples/demo/chart.png').read_bytes()).decode(),
+            'FAILURE_IMAGE':base64.b64encode((ROOT/'examples/demo/credential-panel.png').read_bytes()).decode(),
+            'CASES':f"{m['cases']:,}",'FIXTURES':str(a['cases']),'METHODS':str(tests['methods']),
+            'PROBES':str(sum(x['episodes'] for x in workflows['agents'].values())),
+            'SCRIPTED':str(workflows['scripted']['artifact_pass']),
+            'ALLOWED_RATE':f"{100*m['permitted_released']/m['permitted']:.1f}%",
+            'BASELINE_RATE':f"{100*arms['baseline-test']['overall']['permitted_released']/m['permitted']:.1f}%",
+            'CALLS_BEFORE':str(arms['baseline-test']['overall']['model_calls']),'CALLS':str(m['model_calls']),
+            'P50':str(round(m['inspected_latency_ms']['p50'])),'P95':str(round(m['inspected_latency_ms']['p95'])),
+            'CACHE_BEFORE':f"{cache['arms']['0']['warm_p50_ms']:.2f}",'CACHE_AFTER':f"{cache['arms']['128']['warm_p50_ms']:.2f}"}
+    page=TEMPLATE
+    for key,value in values.items():page=page.replace('{{'+key+'}}',value)
     if '{{' in page:raise ValueError('Unresolved report template')
     (ROOT/'index.html').write_text(page)
-    print('Built index.html from completed release evidence.')
+    print('Built completed release-v2 report, including failed comparison arms.')
 
 
 TEMPLATE='''<!doctype html>
@@ -63,7 +72,7 @@ table{border-collapse:collapse;width:100%;margin:16px 0 22px;font-size:15px}th,t
 <p class="lead">Keep protected data local. Give coding agents a permitted way to inspect public context and compute over private inputs.</p>
 <p>Default inspector: <strong>StartLux-Decision-v1.1-0.8B-Instant</strong>. No training or weight updates.</p>
 <nav aria-label="Report navigation"><a href="#setup">Framework</a><a href="#workflow">Agent workflow</a><a href="#results">Completed results</a><a href="skills/jev-gtw/SKILL.md">Agent skill</a><a href="docs/INTEGRATIONS.md">Install</a></nav>
-<div class="stats"><div class="stat"><strong>{{CASES}}</strong><span>Text / image decision contexts</span></div><div class="stat"><strong>{{FIXTURES}}</strong><span>Reproducible policy fixtures</span></div><div class="stat"><strong>{{METHODS}}</strong><span>Passing implementation tests</span></div><div class="stat"><strong>{{PROBES}}</strong><span>Real sandbox scenarios</span></div></div>
+<div class="stats"><div class="stat"><strong>{{CASES}}</strong><span>New text / image cases</span></div><div class="stat"><strong>{{FIXTURES}}</strong><span>Fresh image challenge cases</span></div><div class="stat"><strong>{{METHODS}}</strong><span>Passing implementation tests</span></div><div class="stat"><strong>{{PROBES}}</strong><span>Live coding-model episodes</span></div></div>
 <section id="setup"><h2>1. One observation boundary</h2>
 <p class="sub">The operator owns the task, recipient, source permissions and approved public snapshots. The coding agent requests a source handle or submits probe code.</p>
 <div class="diagram"><svg viewBox="0 0 1000 320" role="img" aria-labelledby="flow-title flow-desc" xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +88,8 @@ table{border-collapse:collapse;width:100%;margin:16px 0 22px;font-size:15px}th,t
 <rect x="10" y="205" width="180" height="75" rx="12" fill="#f3f6f8" stroke="#dae3e7"/><text x="100" y="234" text-anchor="middle" font-weight="700" font-size="16">Registered inputs</text><text x="100" y="257" text-anchor="middle" font-size="12">Private text / PNG / tables</text>
 <rect x="245" y="205" width="175" height="75" rx="12" fill="#f3f6f8" stroke="#dae3e7"/><text x="332" y="234" text-anchor="middle" font-weight="700" font-size="16">Isolated sandbox</text><text x="332" y="257" text-anchor="middle" font-size="12">Outputs saved privately</text>
 <text x="467" y="262" font-size="12">Capture → review again</text><text x="10" y="310" font-size="13" fill="#536675">Only admitted content or fixed feedback returns to the agent. A skill guides routing; host isolation enforces access.</text></g></svg></div>
-<div class="grid"><div class="card"><h3>Smaller, simpler runtime</h3><p>One typed permission question; no generated explanation, automatic redaction retry or relevance cascade. Explicit source caps and public hashes skip inference.</p></div><div class="card"><h3>Closed on uncertainty</h3><p>Incomplete captures, invalid images, missing inference and malformed scores withhold the view. Modified released text or image payloads fail validation.</p></div></div>
+<div class="grid"><div class="card"><h3>Smaller, simpler runtime</h3><p>One typed question, selected by modality; no generated explanation, automatic redaction retry or relevance cascade. Explicit source caps and public hashes skip inference.</p></div><div class="card"><h3>Closed on uncertainty</h3><p>Incomplete captures, invalid images, missing inference and malformed scores withhold the view. Modified released text or image payloads fail validation.</p></div></div>
+<p>Withheld reads return configured next steps. Exact repeated scores can be cached for 30 seconds with a 128-entry bound; cache keys bind the full context, session and observation. No raw records are stored in the cache. Every release still gets a fresh capability. Unicode and encoded identifiers receive bounded checks, and unknown message roles or extra fields are rejected.</p>
 <div class="note">Default sources are <code>local</code>. Conditional display requires an operator grant. A score of 0.98 is a threshold, not a calibrated 98% safety guarantee.</div>
 </section>
 <section id="workflow"><h2>2. How the agent works with it</h2>
@@ -87,7 +97,11 @@ table{border-collapse:collapse;width:100%;margin:16px 0 22px;font-size:15px}th,t
 <div><h3>Example tool response</h3><pre>{
   "action": "local",
   "reason": "source_local_only",
-  "text": "[Gateway] Content withheld. Write a local probe..."
+  "text": "[Gateway] Content withheld. Write a local probe...",
+  "next_steps": [
+    {"tool": "gateway_read", "arguments": {"source_id": "setup"}},
+    {"tool": "gateway_compute", "source_ids": ["records"]}
+  ]
 }</pre><h3>Probe input / output</h3><p class="small">Fictional sandbox test: two rows with units 4 and 7. Names remain in the sandbox.</p><pre>total = sum(int(row["units"]) for row in rows)
 json.dump({"total": total}, open("/outputs/answer.json", "w"))
 
@@ -99,16 +113,25 @@ Codex invocation: $jev-gtw
 Claude Code invocation: /jev-gtw</pre><p>Register the local MCP server using the <a href="docs/INTEGRATIONS.md">integration guide</a>. The skill teaches the three tools; it does not rewrite client-wide permissions.</p></details>
 <p class="small">Keep protected storage and operator configuration outside native agent access. Same-user local demos provide cooperative routing, not mandatory isolation from every other tool.</p>
 </section>
-<section id="results"><h2>3. Completed validation</h2>
-<p><strong>{{CASES}} existing text/image cases</strong> cover medical and general formats: documents, table previews, logs, code, schemas, clinical narratives, charts and synthetic identity images. Sources include OpenPII, Gretel, BigCodeBench, ChartQA and IDSpace, with constructed task/permission contexts.</p>
-<div class="table-wrap"><table><thead><tr><th>Input</th><th>Cases</th><th>Prohibited withheld</th><th>Permitted released</th></tr></thead><tbody>{{ROWS}}</tbody></table></div>
-<div class="note warning"><strong>High withholding, substantial over-blocking.</strong> All 1,948 prohibited views were withheld, and all 2,580 permitted views were also withheld. The model path has not demonstrated useful automatic release judgment at this threshold. These are not clinical PHI-detection accuracy results.</div>
-<h3>{{FIXTURES}} reproducible policy fixtures</h3><div class="table-wrap"><table><thead><tr><th>Route</th><th>Cases</th><th>Outcome</th><th>Model calls</th></tr></thead><tbody>{{POLICY_ROWS}}</tbody></table></div>
-<p>Approved public navigation remains usable: 128/128 exact public snapshots passed, with no model calls. The protected default withheld 128/128 views. These controls validate policy enforcement separately from the learned reviewer.</p>
-<div class="grid"><div class="card"><h3>Inference cost</h3><p><strong>{{CALLS}} requests</strong> on the large cohort; at most one model question per observation. Warm inspected decisions: <strong>{{P50}} ms p50 / {{P95}} ms p95</strong>, six workers on one A100. No inspector errors.</p></div><div class="card"><h3>Boundary and sandbox checks</h3><p><strong>{{METHODS}} tests + {{TRIALS}} generated trials</strong> passed, including real MCP stdio and skill installation. <strong>{{PROBES}} real Apptainer scenarios</strong> passed, including private output withholding and a saved aggregate.</p></div></div>
-<p class="small" style="margin-top:18px">The large cohort is reused research data with dependent matched contexts, not an independent population sample. The public fixtures are synthetic policy controls. Docker argument checks passed; live Docker and full native Codex/Claude conversations were not run. No training or new coding-agent completion study is claimed.</p>
-<p><a href="docs/RESULTS.md">Full methods, source attribution and limitations</a> · <a href="reports/release-v1/observations.json">Aggregate metrics</a> · <a href="reports/release-v1/protocol.json">Frozen protocol</a></p>
-</section><footer>Latest completed release validation only. Gateway code: MIT. Default model weights: CC BY-NC 4.0. Experimental records stay local; this report contains aggregates and fictional examples.</footer>
+<section id="results"><h2>3. Completed comparisons and live agent tasks</h2>
+<p><strong>5,432 new views across 35 scenario families and 1,084 document/world groups.</strong> Inputs include public MBPP code/tests and MedQuAD medical reference material, fictional record overlays, schemas, errors, encodings, prompt injection, history changes and screenshots.</p>
+<p><strong>No training.</strong> Four question formats were compared on 382 development views. The chosen text question asks whether disclosure would violate policy. A regression failure then caused the image route to retain the original permission question. The 0.98 threshold and 0.8B weights remain unchanged. A fresh 768-case image challenge followed that correction.</p>
+<div class="table-wrap"><table><thead><tr><th>Completed arm</th><th>Cases</th><th>Prohibited released</th><th>Permitted released</th></tr></thead><tbody>{{ROWS}}</tbody></table></div>
+<div class="note"><strong>Permitted-view release improved from {{BASELINE_RATE}} to {{ALLOWED_RATE}} on the same new set.</strong> All 2,812 prohibited views were withheld. However, 1,471 of 2,620 permitted views still failed to pass. This is a policy-release evaluation, not a clinical PHI-detection benchmark.</div>
+<div class="note warning"><strong>Two tempting changes failed regression.</strong> Applying the text risk question to images released eight protected credential screenshots. An offline 0.95 threshold replay released one prohibited regression view. The final gateway keeps the original image question and 0.98 threshold. On the fresh image challenge, all 256 approved public snapshots passed, but all 256 contextual public images remained blocked.</div>
+<h3>Real coding models through MCP and an isolated container</h3>
+<p>Qwen3.8-27B and Gemma 4 31B IT ran locally with native tool calling through the official MCP client. Each episode asked the model to try viewing its input, follow withholding feedback, write Python, and save <code>answer.json</code>. The operator graded private artifacts against exact expected results.</p>
+<div class="table-wrap"><table><thead><tr><th>Local model</th><th>Correct artifacts</th><th>Known canary exposures</th><th>Model requests</th></tr></thead><tbody>{{AGENT_ROWS}}</tbody></table></div>
+<details><summary>Nine task families, three data variants each</summary><table><thead><tr><th>Task</th><th>Qwen correct</th><th>Gemma correct</th></tr></thead><tbody>{{TASK_ROWS}}</tbody></table></details>
+<p class="small">These are authored tasks, not SWE-bench/MBPP task scores or native Codex/Claude sessions. The harness exposes only gateway MCP tools. Local-only source and output policies enforce withholding; these episodes measure workflow usefulness separately from contextual detector accuracy. {{SCRIPTED}} scripted MCP workflows and 11 adversarial SingularityCE container scenarios also passed.</p>
+<div class="grid"><div class="card"><h3>Efficiency</h3><p>New-set model calls fell from {{CALLS_BEFORE}} to {{CALLS}} through stronger deterministic checks. Warm inspected decisions at six workers: <strong>{{P50}} ms p50 / {{P95}} ms p95</strong> on one A100.</p><p>For a serial exact-repeat workload, median latency fell from <strong>{{CACHE_BEFORE}} ms to {{CACHE_AFTER}} ms</strong>; 41 requests used one model call with caching instead of 41.</p><p class="small">The cache result applies to identical repeated requests; it is not a general traffic hit rate or latency guarantee.</p></div><div class="card"><h3>Robustness</h3><p><strong>{{METHODS}} tests and 1,280 generated contract trials</strong> passed. Checks cover exact release bytes, context/session changes, cache expiry, malformed scores, Unicode/encoding vetoes, source paths, MCP transport and sandbox isolation.</p><p>Across the final new, regression and fresh-image sets, <strong>5,016/5,016 prohibited views were withheld</strong>. Cases share templates and paired contexts; this observed result is not a universal safety guarantee.</p></div></div>
+</section>
+<section id="cases"><h2>4. Individual cases and remaining failures</h2>
+<div class="table-wrap"><table><thead><tr><th>Authored input</th><th>Expected</th><th>Final action</th><th>Reason</th></tr></thead><tbody>{{EXAMPLE_ROWS}}</tbody></table></div>
+<p>The empty CSV schema is a remaining false positive. The agent can request the operator-approved setup view suggested by <code>next_steps</code>; a model refusal does not automatically weaken source permissions.</p>
+<figure><img style="width:100%;height:auto;border:1px solid #dae3e7;border-radius:12px" src="data:image/png;base64,{{FAILURE_IMAGE}}" alt="Fictional configuration panel containing a simulated API key, released by the rejected variant and withheld by the final gateway"><figcaption>Preserved fictional failure case: the all-modality risk question released this credential panel; the final image question withheld the same bytes. No real credentials or patient data are pictured.</figcaption></figure>
+<p style="margin-top:20px"><a href="docs/RESULTS.md">Methods, sources and limitations</a> · <a href="reports/release-v2/comparisons.json">Comparison evidence</a> · <a href="reports/release-v2/protocol.json">Frozen implementation</a></p>
+</section><footer>Latest completed experiment only. Inference without training. Code: MIT; default model weights: CC BY-NC 4.0. Source documents and private traces stay local; this report contains aggregates and fictional examples.</footer>
 </main></body></html>'''
 
 

@@ -1,0 +1,30 @@
+{
+  "complete": true,
+  "training": false,
+  "checkpoint_sha256": "ee91ef53043dbcc599f7b9aee7a955b4c866cf71be1fc2682cadd1ee0303a9d5",
+  "arms": {
+    "0": {
+      "requests": 41,
+      "warm_requests": 40,
+      "model_calls": 41,
+      "cache_hits": 0,
+      "actions": {
+        "show": 41
+      },
+      "warm_p50_ms": 30.305182561278343,
+      "warm_p95_ms": 31.129265204072
+    },
+    "128": {
+      "requests": 41,
+      "warm_requests": 40,
+      "model_calls": 1,
+      "cache_hits": 40,
+      "actions": {
+        "show": 41
+      },
+      "warm_p50_ms": 0.4710834473371506,
+      "warm_p95_ms": 0.591157004237175
+    }
+  },
+  "limitations": "Single repeated text observation, unchanged session/history, serial requests, warm local model. Not general workload latency or cache hit rate."
+}

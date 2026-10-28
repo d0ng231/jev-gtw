@@ -18,7 +18,7 @@ approved and contextual views. The SVG figures are editable text assets in
 | `local` (default) | Withhold the view without opening the source; optionally compute locally. |
 | `deny` | Withhold and reject computation. |
 | `approved` | Release only the exact operator-reviewed text/image fingerprint. Changed bytes fail closed. |
-| `contextual` | Apply text vetoes, then one typed JEV permission question. Release only at score ≥0.98. |
+| `contextual` | Apply text vetoes, then one typed JEV question. Release only at permission score ≥0.98. |
 
 `local_compute` is a separate permission. A local source does not automatically
 permit its derived outputs to leave. `probe_view` defaults to `local`; the
@@ -49,9 +49,30 @@ automatic redaction retry and no separate relevance call. Proxy forwarding and
 redirects are disabled. Inference uses loopback unless the operator explicitly
 allows a private host. Inspector errors and malformed scores hold the view.
 
+The default `hybrid` question profile asks whether text would violate the
+trusted disclosure policy and converts the answer to a permission score. Images
+retain the original permission question: applying the text question to images
+released eight credential screenshots in a rejected comparison arm. Both routes
+keep the 0.98 threshold. The underlying model and weights are unchanged.
+
+An exact-request score cache holds at most 128 entries for 30 seconds by default.
+Its key binds the full context, session, observation and request bytes. It stores
+scores and hashes, never raw records. Errors are not cached. Every cache hit still
+gets a fresh context-bound release capability; changed content or policy misses
+the cache. Consecutive identical views do not displace admitted history.
+
+Text vetoes normalize Unicode and check bounded URL, HTML, Unicode-escape and
+base64 representations for known sensitive patterns. Normalization does not
+change the bytes released or create an automatic de-identification route.
+
 Images currently accept bounded, metadata-free RGB PNGs. Unsupported formats
 are withheld. There is no OCR, automatic pixel redaction or medical PHI taxonomy
 classifier. Text signal categories are narrow vetoes, not exhaustive detection.
+
+An operator may set a source's `public_context` to a separate `approved` handle.
+Withheld reads then return concrete `next_steps` pointing to that setup/schema
+view and, when configured and permitted, local computation. The suggestion is
+not a release grant: reading that handle still checks its exact fingerprint.
 
 ## Local probes
 
@@ -76,8 +97,9 @@ The skill guides the coding agent. The host must keep protected files and
 configuration inaccessible to the agent's other tools, preferably on a separate
 server/account. Native shell, native image viewers, search results, other MCP
 servers and direct chat uploads do not automatically pass through this gateway.
-Plain system/user/assistant text and arbitrary provider API fields are not
-covered by the supplied message validator.
+Plain system/developer/user/assistant text remains trusted harness input. The
+validator rejects unknown roles (including legacy `function`) and extra message
+fields; it does not inspect arbitrary top-level provider API parameters.
 
 This is a prototype observation gateway, not pre-execution authorization for
 every agent command or a network firewall. Fixed feedback, timing and repeated
