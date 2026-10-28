@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+from collections import OrderedDict
 from dataclasses import asdict, dataclass, field
 import hashlib
 import json
@@ -109,13 +110,17 @@ class Gateway:
     release path. Submit a transformed view as a new observation to review it.
     """
 
-    def __init__(self, judge: Callable | None = None, *, show_threshold=SHOW_THRESHOLD, max_chars=MAX_TEXT):
+    def __init__(self, judge: Callable | None = None, *, show_threshold=SHOW_THRESHOLD, max_chars=MAX_TEXT,
+                 max_receipts=4096):
         if type(show_threshold) not in (int, float) or not math.isfinite(show_threshold) or not 0 < show_threshold <= 1:
             raise ValueError("Invalid threshold")
         if type(max_chars) is not int or not 1 <= max_chars <= 1_000_000:
             raise ValueError("Invalid text limit")
+        if type(max_receipts) is not int or not 2 <= max_receipts <= 65_536:
+            raise ValueError("Invalid receipt limit")
         self.judge, self.threshold, self.max_chars = judge, show_threshold, max_chars
-        self._pending, self._admitted = {}, set()
+        self.max_receipts = max_receipts
+        self._pending, self._admitted = {}, OrderedDict()
         self._lock = RLock()
         self.events = []
 
@@ -193,7 +198,15 @@ class Gateway:
                     {"type": "text", "text": "Gateway-reviewed image."},
                     {"type": "image_url", "image_url": {"url": "data:image/png;base64," + base64.b64encode(view.image).decode()}}
                 ]})
-            self._admitted.update((self._scope(context), digest(m)) for m in messages)
+            scope = self._scope(context)
+            for message in messages:
+                key = (scope, digest(message))
+                self._admitted[key] = None
+                self._admitted.move_to_end(key)
+            # Retain hashes only. Old receipts fail closed after eviction; the
+            # harness must prune or re-review observations in a longer history.
+            while len(self._admitted) > self.max_receipts:
+                self._admitted.popitem(last=False)
             return messages
 
     @staticmethod
@@ -208,6 +221,7 @@ class Gateway:
         """
         if type(messages) is not list:
             raise ValueError("Expected an ordinary message list")
+        scope = self._scope(context)
         with self._lock:
             for message in messages:
                 if type(message) is not dict or type(message.get("content")) not in (str, list, type(None)):
@@ -217,6 +231,6 @@ class Gateway:
                 if set(message) - {"role", "content", "tool_call_id", "name", "tool_calls"}:
                     raise ValueError("Unsupported message fields")
                 if message.get("role") == "tool" or type(message.get("content")) is list:
-                    if (self._scope(context), digest(message)) not in self._admitted:
+                    if (scope, digest(message)) not in self._admitted:
                         raise ValueError("Unreviewed or altered observation")
 

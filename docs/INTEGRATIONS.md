@@ -120,6 +120,17 @@ gate.validate_request(context, messages)  # after final formatting
 response = coding_model(messages)
 ```
 
+The receipt registry holds 4,096 message hashes by default, configurable through
+`Gateway(max_receipts=...)` or the host configuration's `gateway.max_receipts`.
+Older receipts are evicted and fail validation. Keep the outgoing tool/image
+history within the retained window, or re-review its observations before reuse.
+Ordinary trusted text messages do not occupy receipt slots.
+
+Each `gateway_compute` call has fresh `/outputs`; an earlier artifact is not
+available in a later call. Save the complete answer in one probe and retain its
+artifact ID. Withholding is neither an execution-success signal nor a request to
+repeat the probe.
+
 The host supplies `Access("contextual")` only when the source permits conditional
 display. Register an operator-reviewed immutable public view with
 `Access("approved", approved_sha256=observation.fingerprint())`; do not compute

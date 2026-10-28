@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jev-gtw"
-version = "0.2.0"
+version = "0.2.1"
 description = "Local PII/PHI data-access guardrails and MCP tools for coding agents"
 keywords = ["coding-agents", "privacy", "pii", "phi", "mcp", "agent-skills", "codex", "claude-code", "jev"]
 readme = "README.md"

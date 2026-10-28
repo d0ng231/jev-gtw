@@ -14,10 +14,19 @@ def build():
     def load(name):return json.loads((report/name).read_text())
     observation=load('observations.json');comparison=load('comparisons.json');images=load('image-challenge.json')
     workflows=load('workflows.json');tests=load('tests.json');cache=load('cache.json');protocol=load('protocol.json')
+    audit=json.loads((ROOT/'reports/release-v2-audit.json').read_text())
     assert all(obj.get('complete',obj.get('passed',False)) for obj in [observation,comparison,images,workflows,tests,cache,protocol])
     assert protocol['training'] is False
-    for name,expected in protocol['source_sha256'].items():
+    if not audit['complete'] or audit['new_model_inference'] or not audit['tests']['passed']:
+        raise ValueError('Expected a completed offline audit')
+    for name,expected in audit['original_evidence_sha256'].items():
+        if hashlib.sha256((report/name).read_bytes()).hexdigest()!=expected:
+            raise ValueError('Original experiment evidence changed: '+name)
+    for name,expected in audit['source_sha256'].items():
         if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=expected:
+            raise ValueError('Audited implementation changed: '+name)
+    for name,expected in protocol['source_sha256'].items():
+        if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=expected and name not in audit['source_sha256']:
             raise ValueError('Report implementation differs from frozen experiment: '+name)
     def row(values):return '<tr>'+''.join('<td>'+html.escape(str(v))+'</td>' for v in values)+'</tr>'
     arms=comparison['arms'];m=observation['overall'];rows=''
@@ -28,7 +37,10 @@ def build():
     a=images['overall'];rows+=row(['Fresh image challenge',a['cases'],f"{a['prohibited_original_releases']} / {a['restricted']}",f"{a['permitted_released']} / {a['permitted']}"])
     agent_rows='';families={}
     for key,agent in workflows['agents'].items():
-        agent_rows+=row([agent['model'],f"{agent['artifact_pass']} / {agent['episodes']}",agent['known_canary_exposures'],agent['target_requests']])
+        checked=audit['agents'][key]
+        agent_rows+=row([agent['model'],f"{agent['artifact_pass']} / {agent['episodes']}",
+                        f"{checked['stopped_with_correct_artifact']} / {agent['episodes']}",
+                        agent['known_canary_exposures'],agent['target_requests']])
         for result in agent['rows']:
             family=result['family'];families.setdefault(family,{})
             passed,total=families[family].get(key,(0,0));families[family][key]=(passed+int(result['artifact_pass']),total+1)
@@ -37,7 +49,7 @@ def build():
     values={'ROWS':rows,'AGENT_ROWS':agent_rows,'TASK_ROWS':task_rows,'EXAMPLE_ROWS':example_rows,
             'IMAGE':base64.b64encode((ROOT/'examples/demo/chart.png').read_bytes()).decode(),
             'FAILURE_IMAGE':base64.b64encode((ROOT/'examples/demo/credential-panel.png').read_bytes()).decode(),
-            'CASES':f"{m['cases']:,}",'FIXTURES':str(a['cases']),'METHODS':str(tests['methods']),
+            'CASES':f"{m['cases']:,}",'FIXTURES':str(a['cases']),'METHODS':str(audit['tests']['methods']),
             'PROBES':str(sum(x['episodes'] for x in workflows['agents'].values())),
             'SCRIPTED':str(workflows['scripted']['artifact_pass']),
             'ALLOWED_RATE':f"{100*m['permitted_released']/m['permitted']:.1f}%",
@@ -90,10 +102,11 @@ table{border-collapse:collapse;width:100%;margin:16px 0 22px;font-size:15px}th,t
 <text x="467" y="262" font-size="12">Capture → review again</text><text x="10" y="310" font-size="13" fill="#536675">Only admitted content or fixed feedback returns to the agent. A skill guides routing; host isolation enforces access.</text></g></svg></div>
 <div class="grid"><div class="card"><h3>Smaller, simpler runtime</h3><p>One typed question, selected by modality; no generated explanation, automatic redaction retry or relevance cascade. Explicit source caps and public hashes skip inference.</p></div><div class="card"><h3>Closed on uncertainty</h3><p>Incomplete captures, invalid images, missing inference and malformed scores withhold the view. Modified released text or image payloads fail validation.</p></div></div>
 <p>Withheld reads return configured next steps. Exact repeated scores can be cached for 30 seconds with a 128-entry bound; cache keys bind the full context, session and observation. No raw records are stored in the cache. Every release still gets a fresh capability. Unicode and encoded identifiers receive bounded checks, and unknown message roles or extra fields are rejected.</p>
+<p class="small">Message receipts now retain at most 4,096 hashes per gateway by default. Evicted receipts fail validation; custom harnesses must prune or re-review older tool/image history.</p>
 <div class="note">Default sources are <code>local</code>. Conditional display requires an operator grant. A score of 0.98 is a threshold, not a calibrated 98% safety guarantee.</div>
 </section>
 <section id="workflow"><h2>2. How the agent works with it</h2>
-<div class="grid"><div class="steps"><div class="step"><h3>Get permitted context</h3><p><code>gateway_sources</code> lists registered handles. <code>gateway_read("setup")</code> returns the approved task and schema.</p></div><div class="step"><h3>Request a data view</h3><p><code>gateway_read("records")</code> returns <code>local</code>. It does not open the protected file just to reject the view.</p></div><div class="step"><h3>Compute without displaying rows</h3><p><code>gateway_compute(["records"], code)</code> runs Python with read-only inputs and no network. Captured output is reviewed too.</p></div><div class="step"><h3>Keep artifacts local</h3><p>Save under <code>/outputs</code>. The agent gets a random receipt; the operator can verify the private artifact. A receipt alone does not prove success.</p></div></div>
+<div class="grid"><div class="steps"><div class="step"><h3>Get permitted context</h3><p><code>gateway_sources</code> lists registered handles. <code>gateway_read("setup")</code> returns the approved task and schema.</p></div><div class="step"><h3>Request a data view</h3><p><code>gateway_read("records")</code> returns <code>local</code>. It does not open the protected file just to reject the view.</p></div><div class="step"><h3>Compute without displaying rows</h3><p><code>gateway_compute(["records"], code)</code> runs Python with read-only inputs and no network. Each call starts with fresh outputs; submit a complete program. Captured output is reviewed too.</p></div><div class="step"><h3>Keep artifacts local</h3><p>Save under <code>/outputs</code>. The agent gets a random receipt; the operator can verify that run's private artifact. Earlier artifacts are not mounted into later calls. A receipt alone does not prove success.</p></div></div>
 <div><h3>Example tool response</h3><pre>{
   "action": "local",
   "reason": "source_local_only",
@@ -121,7 +134,9 @@ Claude Code invocation: /jev-gtw</pre><p>Register the local MCP server using the
 <div class="note warning"><strong>Two tempting changes failed regression.</strong> Applying the text risk question to images released eight protected credential screenshots. An offline 0.95 threshold replay released one prohibited regression view. The final gateway keeps the original image question and 0.98 threshold. On the fresh image challenge, all 256 approved public snapshots passed, but all 256 contextual public images remained blocked.</div>
 <h3>Real coding models through MCP and an isolated container</h3>
 <p>Qwen3.8-27B and Gemma 4 31B IT ran locally with native tool calling through the official MCP client. Each episode asked the model to try viewing its input, follow withholding feedback, write Python, and save <code>answer.json</code>. The operator graded private artifacts against exact expected results.</p>
-<div class="table-wrap"><table><thead><tr><th>Local model</th><th>Correct artifacts</th><th>Known canary exposures</th><th>Model requests</th></tr></thead><tbody>{{AGENT_ROWS}}</tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Local model</th><th>Created a correct artifact</th><th>Also returned a final response</th><th>Known canary exposures</th><th>Model requests</th></tr></thead><tbody>{{AGENT_ROWS}}</tbody></table></div>
+<p>The first metric means <em>at least one</em> correct saved artifact. Four Qwen episodes kept retrying until the 12-turn limit. Six other Qwen episodes tried to verify an earlier output in a fresh sandbox; their earlier correct artifacts remained saved, but the latest probe contained no answer file. Final responses were not graded for factual accuracy.</p>
+<p class="small">The follow-up audit regraded the original traces and clarified the tool's fresh-workspace instructions. It did not rerun the coding models or establish that the clarification improves completion.</p>
 <details><summary>Nine task families, three data variants each</summary><table><thead><tr><th>Task</th><th>Qwen correct</th><th>Gemma correct</th></tr></thead><tbody>{{TASK_ROWS}}</tbody></table></details>
 <p class="small">These are authored tasks, not SWE-bench/MBPP task scores or native Codex/Claude sessions. The harness exposes only gateway MCP tools. Local-only source and output policies enforce withholding; these episodes measure workflow usefulness separately from contextual detector accuracy. {{SCRIPTED}} scripted MCP workflows and 11 adversarial SingularityCE container scenarios also passed.</p>
 <div class="grid"><div class="card"><h3>Efficiency</h3><p>New-set model calls fell from {{CALLS_BEFORE}} to {{CALLS}} through stronger deterministic checks. Warm inspected decisions at six workers: <strong>{{P50}} ms p50 / {{P95}} ms p95</strong> on one A100.</p><p>For a serial exact-repeat workload, median latency fell from <strong>{{CACHE_BEFORE}} ms to {{CACHE_AFTER}} ms</strong>; 41 requests used one model call with caching instead of 41.</p><p class="small">The cache result applies to identical repeated requests; it is not a general traffic hit rate or latency guarantee.</p></div><div class="card"><h3>Robustness</h3><p><strong>{{METHODS}} tests and 1,280 generated contract trials</strong> passed. Checks cover exact release bytes, context/session changes, cache expiry, malformed scores, Unicode/encoding vetoes, source paths, MCP transport and sandbox isolation.</p><p>Across the final new, regression and fresh-image sets, <strong>5,016/5,016 prohibited views were withheld</strong>. Cases share templates and paired contexts; this observed result is not a universal safety guarantee.</p></div></div>
@@ -131,7 +146,7 @@ Claude Code invocation: /jev-gtw</pre><p>Register the local MCP server using the
 <p>The empty CSV schema is a remaining false positive. The agent can request the operator-approved setup view suggested by <code>next_steps</code>; a model refusal does not automatically weaken source permissions.</p>
 <figure><img style="width:100%;height:auto;border:1px solid #dae3e7;border-radius:12px" src="data:image/png;base64,{{FAILURE_IMAGE}}" alt="Fictional configuration panel containing a simulated API key, released by the rejected variant and withheld by the final gateway"><figcaption>Preserved fictional failure case: the all-modality risk question released this credential panel; the final image question withheld the same bytes. No real credentials or patient data are pictured.</figcaption></figure>
 <p style="margin-top:20px"><a href="docs/RESULTS.md">Methods, sources and limitations</a> · <a href="reports/release-v2/comparisons.json">Comparison evidence</a> · <a href="reports/release-v2/protocol.json">Frozen implementation</a></p>
-</section><footer>Latest completed experiment only. Inference without training. Code: MIT; default model weights: CC BY-NC 4.0. Source documents and private traces stay local; this report contains aggregates and fictional examples.</footer>
+</section><footer>Latest completed study with an <a href="reports/release-v2-audit.json">offline follow-up audit</a>: 10,728 stored-score decisions replayed unchanged and 5,000 messages checked against the receipt bound. Model measurements belong to <a href="https://github.com/d0ng231/jev-gtw/tree/7c5cdfdcd48c0d84b29387b990e434fc2ae897d7">the preserved experiment version</a>. No new inference or training in the audit. Code: MIT; default model weights: CC BY-NC 4.0. Source documents and private traces stay local.</footer>
 </main></body></html>'''
 
 

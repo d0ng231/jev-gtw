@@ -39,6 +39,13 @@ final tool and multimodal payloads. Custom harnesses must validate after their
 last formatting step. The MCP adapter returns only reviewed content and fixed
 feedback. It has no unrestricted filesystem resource endpoint.
 
+Receipt storage retains hashes only and is capped at 4,096 entries by default
+(`Gateway(max_receipts=...)`, range 2–65,536). The most recently issued receipts
+remain valid; eviction rejects an older payload rather than admitting it without
+verification. A custom harness must prune or re-review older tool/image history.
+Validation does not refresh receipt age. The pending capability queue and event
+log are bounded separately.
+
 `service.py` resolves operator-defined handles. Source reads use bounded,
 descriptor-relative opens and reject symlinks and special files. A denied or
 local-only view does not open the source. Context changes and admitted history
@@ -84,6 +91,10 @@ Docker or Apptainer container, disables networking and omits host credentials.
 It bounds execution time and captured output. Files under `/outputs` stay in an
 owner-only artifact directory; the agent receives a random receipt. Return codes
 and exception messages are not forwarded through an unreviewed channel.
+
+Every compute call starts a fresh workspace. Previous `/outputs` files are not
+mounted into a later call. Submit a complete program, retain its artifact ID for
+operator review, and do not retry solely because captured output was withheld.
 
 Docker requires an image digest; Apptainer requires a local SIF with a verified
 SHA256. There is **no host execution fallback**. Provision server-level CPU,

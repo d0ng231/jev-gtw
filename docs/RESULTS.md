@@ -93,20 +93,38 @@ The models could call only `gateway_sources`, `gateway_read` and
 the returned feedback. Some episodes skipped that initial read; it was an
 instruction, not a forced controller action.
 
-| Model | Episodes | Correct private artifacts | Known canary exposures | Model requests | Tool calls |
-|---|---:|---:|---:|---:|---:|
-| Qwen3.8-27B | 27 | 27 | 0 | 184 | 161 |
-| Gemma 4 31B IT | 27 | 27 | 0 | 111 | 84 |
+| Model | Episodes | Created a correct artifact | Also returned a final response | Known canary exposures | Model requests | Tool calls |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen3.8-27B | 27 | 27 | 23 | 0 | 184 | 161 |
+| Gemma 4 31B IT | 27 | 27 | 27 | 0 | 111 | 84 |
 
 Nine task families each had three data variants: CSV thousands-separator repair,
 CSV joins, JSONL error counts, read-only SQLite grouping, FHIR and HL7 numeric
 aggregation, clinical diagnosis counts, private PNG dimensions, and approved
 public PNG dimensions. The models wrote their own Python. The operator graded
 `answer.json` inside the private artifact directory against the expected result.
+The original artifact metric counts **any correct artifact during an episode**;
+it does not require the agent to stop or its last probe to create the answer.
 
-Qwen issued 79 compute calls and Gemma 36, so successful completion does **not**
-mean optimal tool use. The withholding response deliberately does not reveal
-execution success or raw exceptions, which can cause redundant probes. Approved
+The follow-up audit found four Qwen episodes at the 12-turn limit: one FHIR and
+three HL7 tasks. All had created correct artifacts, but none returned a final
+response. Six other Qwen episodes ran follow-up verification probes assuming
+earlier `/outputs` files persisted. Every call actually creates a fresh workspace.
+The earlier correct artifacts remained saved; those six latest probes contained
+no `answer.json`. Qwen's latest receipt had a correct answer in 21/27 episodes;
+17/27 both returned a final response and had a correct answer in the latest
+receipt. Gemma achieved 27/27 on both diagnostics. The latest-receipt diagnostic
+is stricter than task artifact creation and does not invalidate earlier artifacts.
+
+Here, a final response means an assistant message without tool calls. The saved
+traces did not retain provider finish reasons, and response prose was not graded.
+The audit therefore does not establish fully correct conversational completion.
+
+Qwen issued 79 compute calls and Gemma 36. The withholding response deliberately
+does not reveal execution success or raw exceptions, which can cause redundant
+probes. The tool description now explains fresh workspaces and tells the agent
+not to retry solely because output was withheld. This clarification has **not**
+been evaluated in a new coding-model run. Approved
 images actually reached Qwen in three episodes and Gemma in one; other image
 work could be completed by local header inspection. This is not a broad visual
 reasoning evaluation.
@@ -141,12 +159,41 @@ The cache stores only hashes and scores, is bounded to 128 entries and 30
 seconds by default, and binds context, recipient, session, history and
 observation identity. Each hit still needs a fresh release capability. Tests
 cover changes, eviction, expiry, malformed responses and failure non-caching.
-The completed suite passed **74 tests and 1,280 generated contract trials**.
+The original suite passed **74 tests and 1,280 generated contract trials**;
+the follow-up implementation suite passes **86 tests** with the same 1,280 trials.
 Those counts cover implementation behavior, not independent privacy examples.
+
+## Follow-up audit
+
+The [offline audit](../reports/release-v2-audit.json) recomputed every published
+comparison-arm total from raw per-case records, checked final-cohort case IDs,
+labels, image hashes and frozen source snapshots, and independently regraded
+artifacts from the 54 saved agent traces. All published decision totals match.
+It replayed **10,728 final decisions** through the updated gateway using their
+saved model scores; all actions and reasons remained unchanged. This is a code
+compatibility check, not fresh inference or a new accuracy estimate.
+
+A 5,000-message stress check reproduced an unbounded receipt registry in the
+experiment version. The current implementation retains at most **4,096 message
+hashes** by default. The newest receipt validates and an evicted receipt is
+rejected. Tests additionally cover image receipt pairs, session isolation and
+reissuance. The workflow grader now distinguishes artifact creation, final
+response and latest-artifact correctness, and rejects oversized files and
+symlinks in every artifact path component.
+
+Model measurements belong to [commit 7c5cdfd](https://github.com/d0ng231/jev-gtw/tree/7c5cdfdcd48c0d84b29387b990e434fc2ae897d7).
+All original `reports/release-v2` records are preserved. The separate audit pins
+their hashes and the changed implementation. No training or additional model
+inference was performed for this audit.
 
 ## Reproduce and inspect
 
 Install `.[dev]`, set `TMPDIR` to private scratch, and use new output directories.
+With the original raw records available locally, recheck them with
+`python tools/audit_release.py --records eval/release/v2 --out reports/new-audit.json`.
+That command publishes aggregates only; the public repository does not contain
+the raw traces or source documents.
+
 Fetch the exact source versions:
 
 ```bash

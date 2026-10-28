@@ -30,6 +30,9 @@ def create_server(service):
     def compute(source_ids: list[str], code: str) -> CallToolResult:
         """Run Python in the configured sandbox. Inputs: /inputs/<id>; outputs: /outputs.
 
+        Each call starts with fresh outputs; earlier artifacts are not mounted.
+        Submit a complete program and retain its artifact_id for operator review.
+        Withholding alone is not a reason to retry or check a previous output file.
         Captured output is reviewed. Saved artifacts remain private. No configured
         sandbox means no execution. Never infer computation success from withholding.
         """

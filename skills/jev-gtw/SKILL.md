@@ -25,6 +25,9 @@ the host's separation of protected storage from the agent.
    results under `/outputs`. Keep identities, rows and private images out of
    stdout. Captured stdout and stderr are reviewed too. An `artifact_id` is an
    opaque receipt, not a downloadable file or proof of successful computation.
+   Each call starts with fresh `/outputs`; earlier artifacts are not mounted.
+   Submit a complete program and retain its receipt for operator review. Do not
+   retry or check a previous output file solely because capture was withheld.
 4. Continue from permitted evidence. Avoid retrying the same withheld preview;
    unchanged requests can reuse a short-lived decision. If a needed view is withheld, use approved
    schema/examples or a local probe. A redacted output is a new candidate that

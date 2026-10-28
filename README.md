@@ -145,13 +145,21 @@ tools, other servers or direct chat uploads.
 | 5,432 new decision cases, 35 families | **2,812/2,812 prohibited views withheld**; permitted release improved from **132/2,620 (5.0%) to 1,149/2,620 (43.9%)**. |
 | 4,528 reused regression cases | Final: 1,948/1,948 prohibited views withheld; 294/2,580 permitted views released. |
 | 768 fresh image cases | 256/256 protected views withheld; 256/256 exact approved public snapshots released; all 256 contextual public views still withheld. |
-| Actual local coding agents | **Qwen3.8-27B: 27/27**, **Gemma 4 31B IT: 27/27** correct private artifacts; no known canary exposures. |
-| Boundary and execution checks | **74 tests + 1,280 generated trials**, 27 scripted MCP workflows and 11 real container scenarios passed. |
+| Actual local coding agents | Both created a correct private artifact in **27/27** episodes. A final response followed in **23/27 Qwen** and **27/27 Gemma** episodes; no known canary exposures. |
+| Boundary and execution checks | **86 current tests + 1,280 generated trials** passed. Original study: 27 scripted MCP workflows and 11 real container scenarios passed. |
 
 The agent tasks cover CSV repair/joins, JSONL, SQLite, FHIR, HL7, clinical category
 counts and PNG processing. They use the official MCP client and SingularityCE
 with only gateway tools exposed. These are authored tasks, not native
 Codex/Claude sessions or standard coding-benchmark scores.
+
+**Rechecked against the raw records.** All 10,728 final decisions replayed
+unchanged with saved scores. Four Qwen episodes hit the turn limit despite
+creating correct artifacts; six later probes incorrectly expected previous
+outputs in a fresh workspace. The tool now states that isolation explicitly.
+Receipt storage is capped at 4,096 hashes and rejects evicted receipts. These are
+offline verification and implementation fixes; the coding models were not rerun.
+Original experiment evidence remains unchanged. See the [audit](reports/release-v2-audit.json).
 
 **Failures changed the design.** The new text question released eight credential
 screenshots when applied to images; that image variant was rejected. A 0.95

@@ -1,0 +1,273 @@
+{
+  "complete": true,
+  "training": false,
+  "new_model_inference": false,
+  "experiment_commit": "7c5cdfdcd48c0d84b29387b990e434fc2ae897d7",
+  "original_evidence_preserved": true,
+  "decisions": {
+    "published_comparison_arms_verified": 5,
+    "cohorts": {
+      "final-test": {
+        "cases": 5432,
+        "matching_decisions": 5432,
+        "groups": 1084,
+        "case_sha256": "aaca6f5e686da0b5def8774d8ed1cada52f055d7085a0f61af962a2fbb8ed521",
+        "results_sha256": "92f0dec54200cfa36c58d20ce336ac75122f3726fea5557e0b92a2a51c834951",
+        "restricted": 2812,
+        "prohibited_original_releases": 0,
+        "permitted": 2620,
+        "permitted_released": 1149
+      },
+      "final-regression": {
+        "cases": 4528,
+        "matching_decisions": 4528,
+        "groups": 996,
+        "case_sha256": "2151515b8002abdb72c799d9162d468a81a0688294ebdf074c1cc2e4af848831",
+        "results_sha256": "961d446f541710b503350a9430de0573bea84e154c001fb66e6f28c4375e303f",
+        "restricted": 1948,
+        "prohibited_original_releases": 0,
+        "permitted": 2580,
+        "permitted_released": 294
+      },
+      "final-image-challenge": {
+        "cases": 768,
+        "matching_decisions": 768,
+        "groups": 64,
+        "case_sha256": "ea322070726215da1e6cb84b20c35bf5bc9cc6c338334386ef1e1be6a6ed8f91",
+        "results_sha256": "c6748dfbdbc07c2feb26569f2ab6d95c77a0e36381ec5087785736af498ac6a7",
+        "restricted": 256,
+        "prohibited_original_releases": 0,
+        "permitted": 512,
+        "permitted_released": 256
+      }
+    },
+    "method": "Replay saved scores through current code; no new inference or accuracy estimate."
+  },
+  "agents": {
+    "qwen": {
+      "model": "Qwen/Qwen3.8-27B",
+      "episodes": 27,
+      "artifact_pass": 27,
+      "latest_artifact_pass": 21,
+      "agent_stopped": 23,
+      "stopped_with_correct_artifact": 23,
+      "stopped_with_correct_latest_artifact": 17,
+      "known_canary_exposures": 0,
+      "target_requests": 184,
+      "tool_calls": 161,
+      "compute_calls": 79,
+      "terminations": {
+        "agent_stop": 23,
+        "turn_limit": 4
+      },
+      "nonterminating_episodes": [
+        {
+          "family": "fhir_labs",
+          "seed": 1001,
+          "artifact_pass": true,
+          "latest_artifact_pass": true,
+          "termination": "turn_limit",
+          "agent_stopped": false,
+          "stopped_with_correct_artifact": false,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 12,
+          "tool_calls": 12,
+          "compute_calls": 9,
+          "trace_sha256": "2cb9c874271c27f7119f28238c689f872f4f98425c28e019a57f82397917bac8"
+        },
+        {
+          "family": "hl7_labs",
+          "seed": 1001,
+          "artifact_pass": true,
+          "latest_artifact_pass": true,
+          "termination": "turn_limit",
+          "agent_stopped": false,
+          "stopped_with_correct_artifact": false,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 12,
+          "tool_calls": 12,
+          "compute_calls": 9,
+          "trace_sha256": "e17a7cadb73bbd7175c3324c087242d2320b58e276392eaf664d331dd6a15163"
+        },
+        {
+          "family": "hl7_labs",
+          "seed": 1002,
+          "artifact_pass": true,
+          "latest_artifact_pass": true,
+          "termination": "turn_limit",
+          "agent_stopped": false,
+          "stopped_with_correct_artifact": false,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 12,
+          "tool_calls": 12,
+          "compute_calls": 9,
+          "trace_sha256": "9d013e5e5d42e646b8a8ba9e8a835e76a5fbf76b02a1342ea96f13686aa00243"
+        },
+        {
+          "family": "hl7_labs",
+          "seed": 1003,
+          "artifact_pass": true,
+          "latest_artifact_pass": true,
+          "termination": "turn_limit",
+          "agent_stopped": false,
+          "stopped_with_correct_artifact": false,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 12,
+          "tool_calls": 12,
+          "compute_calls": 9,
+          "trace_sha256": "dcdd593a53af9f8ce81c6ac2ea43bdff4f2d03a3ba452cbd05ef3fb20888f43a"
+        }
+      ],
+      "latest_artifact_missing_or_incorrect": [
+        {
+          "family": "csv_join",
+          "seed": 1001,
+          "artifact_pass": true,
+          "latest_artifact_pass": false,
+          "termination": "agent_stop",
+          "agent_stopped": true,
+          "stopped_with_correct_artifact": true,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 6,
+          "tool_calls": 5,
+          "compute_calls": 2,
+          "trace_sha256": "a704f571179b814324c5070a54b1301ed83cf623b499aee56816b361c61006d6"
+        },
+        {
+          "family": "csv_total",
+          "seed": 1002,
+          "artifact_pass": true,
+          "latest_artifact_pass": false,
+          "termination": "agent_stop",
+          "agent_stopped": true,
+          "stopped_with_correct_artifact": true,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 6,
+          "tool_calls": 5,
+          "compute_calls": 2,
+          "trace_sha256": "c7f45acc73da1cda7a1c24c4718bbe2c5a37413ef509011e13110803a1a3b5fc"
+        },
+        {
+          "family": "csv_total",
+          "seed": 1003,
+          "artifact_pass": true,
+          "latest_artifact_pass": false,
+          "termination": "agent_stop",
+          "agent_stopped": true,
+          "stopped_with_correct_artifact": true,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 6,
+          "tool_calls": 5,
+          "compute_calls": 2,
+          "trace_sha256": "079f1930ee913ab3867d4178e629ac80798722acc22cf4531901416b6d3d5cd7"
+        },
+        {
+          "family": "private_image",
+          "seed": 1002,
+          "artifact_pass": true,
+          "latest_artifact_pass": false,
+          "termination": "agent_stop",
+          "agent_stopped": true,
+          "stopped_with_correct_artifact": true,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 6,
+          "tool_calls": 5,
+          "compute_calls": 2,
+          "trace_sha256": "2f0e16348a8ec6f1da7e296cc4083bd817f85cdf187ed6faff3aba0fbb90bb3e"
+        },
+        {
+          "family": "private_image",
+          "seed": 1003,
+          "artifact_pass": true,
+          "latest_artifact_pass": false,
+          "termination": "agent_stop",
+          "agent_stopped": true,
+          "stopped_with_correct_artifact": true,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 6,
+          "tool_calls": 5,
+          "compute_calls": 2,
+          "trace_sha256": "58c6c7418b9c0cc9e138c112bee8f0c1f83ed9a5db0ceae42d65ff2ed71a54d2"
+        },
+        {
+          "family": "public_image",
+          "seed": 1003,
+          "artifact_pass": true,
+          "latest_artifact_pass": false,
+          "termination": "agent_stop",
+          "agent_stopped": true,
+          "stopped_with_correct_artifact": true,
+          "stopped_with_correct_latest_artifact": false,
+          "known_canary_exposures": 0,
+          "target_requests": 7,
+          "tool_calls": 6,
+          "compute_calls": 3,
+          "trace_sha256": "de02a005b42d66f9a3c2cfdfb4d8aa98717c0342a3f6c09b9d3817b928c7aeb2"
+        }
+      ]
+    },
+    "gemma": {
+      "model": "google/gemma-4-31B-it",
+      "episodes": 27,
+      "artifact_pass": 27,
+      "latest_artifact_pass": 27,
+      "agent_stopped": 27,
+      "stopped_with_correct_artifact": 27,
+      "stopped_with_correct_latest_artifact": 27,
+      "known_canary_exposures": 0,
+      "target_requests": 111,
+      "tool_calls": 84,
+      "compute_calls": 36,
+      "terminations": {
+        "agent_stop": 27
+      },
+      "nonterminating_episodes": [],
+      "latest_artifact_missing_or_incorrect": []
+    }
+  },
+  "long_session": {
+    "messages": 5000,
+    "retained_receipts": 4096,
+    "limit": 4096,
+    "latest_valid": true,
+    "evicted_receipt_rejected": true
+  },
+  "tests": {
+    "methods": 86,
+    "passed": true
+  },
+  "source_sha256": {
+    "jev_gtw/core.py": "127e41c34af1f3fe4dc3223b63c505991f37c87bcfbe9faf49eaee66aa76ebde",
+    "jev_gtw/mcp_server.py": "66d2d57a74682fc2e85c48d2a3eadeb5f7c36282ed6809d1313ddaf1bd205cab",
+    "tools/exercise_workflows.py": "64187a6ff49f2550ecf5a5a2f21bacbe3f2d1c7a92201a4485be96a0543dec78",
+    "tools/audit_release.py": "9a118b2d079bba6ff0fd0ace39fdd9db5d4d4fe4a920a4a6caa1fb82edb02373",
+    "tests/test_core.py": "771a14083af772044f585e6aa695ea062acbb597c3af894b0a9c7cc6b805ea44",
+    "tests/test_workflows.py": "b15b7434966b2be6a9c6be0d87c5d62449007889361fcd549abb5be37d9d712b"
+  },
+  "original_evidence_sha256": {
+    "cache.json": "66a68c8f336dfb7a4358064fe0994fa3a781d1f7d50c0450daf6288b1e4ca88d",
+    "comparisons.json": "098c4ec248f24401a9a1fc4c82609dd05187f5956a1e4fdc062e9780e53a1bf6",
+    "development.json": "efb7449f68a62dbc37af6871b01468fbb2ef436cab486dabf09453768adc7141",
+    "examples.json": "6859a2204393f0324b5bc59c856045aa01f610b795bc78881ee76b01d84363f8",
+    "image-challenge.json": "a590b1f1870c90ea5cdd638ce284a3320486a4d68232d75ca0c12593d2aaba24",
+    "observations.json": "acf61e1da9c262557c94a2e328b4e6e4065ded292a89f36581fde04c532dd323",
+    "protocol.json": "7ce1e9a0187365acf2904e2b8e27e601eea4b22c50351381a909ed6d70e5165b",
+    "sources.json": "9454c1575884c324c27ab74cfa840074cd6c850b95b9e7d0f3f9882c0f9d712a",
+    "tests.json": "ad87349a97db3b7db9f49377259543e5563687b54f749345d0a7d31c81375f24",
+    "workflows.json": "5ba5aba44d5578b436be33a2d53cc5bb198290d1d5c359812a7999598cdbc7d1"
+  },
+  "limitations": [
+    "Saved-score replay does not measure new model performance.",
+    "Agent stop means a final assistant response without tool calls, not validated answer prose.",
+    "Known-canary checks do not establish universal semantic privacy."
+  ]
+}

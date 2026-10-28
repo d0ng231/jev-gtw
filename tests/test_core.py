@@ -170,6 +170,40 @@ class CoreTests(unittest.TestCase):
         with self.assertRaises(ValueError):Access('approved',approved_sha256='x')
         with self.assertRaises(ValueError):Context('','policy')
         with self.assertRaises(ValueError):Observation(image=bytearray(b'x'))
+        for limit in [True, 0, 1, 65_537, 2.5, None]:
+            with self.subTest(limit=limit), self.assertRaises(ValueError):Gateway(max_receipts=limit)
+
+    def test_long_session_receipts_are_bounded_and_eviction_fails_closed(self):
+        gate=Gateway(max_receipts=4);messages=[]
+        for i in range(40):
+            decision=gate.inspect(self.context,Observation(text='private'))
+            messages.append(gate.messages(self.context,decision,tool_call_id=str(i)))
+            gate.validate_request(self.context,messages[-1])
+            self.assertLessEqual(len(gate._admitted),4)
+        for expired in messages[:-4]:
+            with self.assertRaises(ValueError):gate.validate_request(self.context,expired)
+        gate.validate_request(self.context,[m for batch in messages[-4:] for m in batch])
+
+    def test_image_receipt_pair_survives_capacity_eviction(self):
+        gate=Gateway(max_receipts=2)
+        _,old=self.deliver(gate,Observation(text='private'))
+        image=Observation(image=png())
+        _,current=self.deliver(gate,image,Access('approved',approved_sha256=image.fingerprint()))
+        self.assertEqual(len(gate._admitted),2)
+        gate.validate_request(self.context,current)
+        with self.assertRaises(ValueError):gate.validate_request(self.context,old)
+
+    def test_reissued_receipt_is_retained_without_cross_session_reuse(self):
+        gate=Gateway(max_receipts=2)
+        def issue(call_id):
+            decision=gate.inspect(self.context,Observation())
+            return gate.messages(self.context,decision,tool_call_id=call_id)
+        first=issue('first');old=issue('old')
+        self.assertEqual(first,issue('first'))
+        issue('new')
+        gate.validate_request(self.context,first)
+        with self.assertRaises(ValueError):gate.validate_request(self.context,old)
+        with self.assertRaises(ValueError):gate.validate_request(replace(self.context,session='other'),first)
 
     def test_generated_policy_and_payload_trials(self):
         # 1,280 independently exercised policy/mutation combinations; no model accuracy claim.
